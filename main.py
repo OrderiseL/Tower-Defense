@@ -1,6 +1,7 @@
 import os
 import sys
 import pygame
+from enemies.scorpion import Scorpion
 from settings import Settings
 
 
@@ -13,7 +14,7 @@ class Game:
         self.settings = Settings()
         self.screen = pygame.display.set_mode((self.settings.scr_width, self.settings.scr_height))
         # Objects
-        self.enemies = []
+        self.enemies = [Scorpion()]
         self.towers = []
         # Player resources
         self.lives = 10
@@ -41,7 +42,8 @@ class Game:
     def _update_screen(self):
         # Load background
         self.screen.blit(self.settings.bg, (0, 0))
-
+        for enemy in self.enemies:
+            enemy.draw(self.screen)
         pygame.display.update()
 
 
