@@ -4,12 +4,14 @@ import pygame
 from settings import Settings
 
 
+# noinspection PyMethodMayBeStatic
 class Game:
     def __init__(self):
         pygame.init()
+        self.active = True
         # initalize main window settings
         self.settings = Settings()
-        self.screen = pygame.display.set_mode((self.height, self.width))
+        self.screen = pygame.display.set_mode((self.settings.scr_width, self.settings.scr_height))
         # Objects
         self.enemies = []
         self.towers = []
@@ -20,18 +22,29 @@ class Game:
     def run(self):
         """Function to run game"""
         clock = pygame.time.Clock()
-        run = True
-        while run:
+
+        while self.active:
             clock.tick(60)  # Limit framerate
-            for event in pygame.event.get():
-                if event == pygame.QUIT:
-                    run = False
             self._update_screen()
+            self._check_events()
 
         pygame.quit()
+
+    def _check_events(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                print("Exit")
+                self.active = False
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                pass
 
     def _update_screen(self):
         # Load background
         self.screen.blit(self.settings.bg, (0, 0))
 
         pygame.display.update()
+
+
+if __name__ == '__main__':
+    g = Game()
+    g.run()
