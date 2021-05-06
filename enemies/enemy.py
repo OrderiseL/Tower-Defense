@@ -1,5 +1,7 @@
 import pygame
 import math
+import numpy as np
+from PIL import Image
 from pygame.sprite import Sprite
 
 
