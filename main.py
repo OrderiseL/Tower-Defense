@@ -1,11 +1,12 @@
 import os
 import sys
 import pygame
+import numpy as np
+from PIL import Image
 from enemies.scorpion import Scorpion
 from settings import Settings
 
 
-# noinspection PyMethodMayBeStatic
 class Game:
     def __init__(self):
         pygame.init()
@@ -42,6 +43,7 @@ class Game:
     def _update_screen(self):
         # Load background
         self.screen.blit(self.settings.bg, (0, 0))
+
         for enemy in self.enemies:
             enemy.draw(self.screen)
         pygame.display.update()
@@ -50,3 +52,4 @@ class Game:
 if __name__ == '__main__':
     g = Game()
     g.run()
+
