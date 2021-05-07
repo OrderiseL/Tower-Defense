@@ -5,6 +5,7 @@
     <orderEntry type="jdk" jdkName="Python 3.8" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module" module-name="AlienInvasion" />
+    <orderEntry type="module" module-name="Desktop" />
   </component>
   <component name="PyDocumentationSettings">
     <option name="format" value="PLAIN" />
