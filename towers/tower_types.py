@@ -1,19 +1,10 @@
 import pygame
 from towers.tower import Tower
 import math
+from load_assets import *
 
-# load tower imgs
-ltower_imgs = [pygame.transform.scale(pygame.image.load(
-    r"used_assets\Towers\archer_1\{}.png".format(c)), (60, 60))
-    for c in range(7, 10)]
-# load archer imgs
-larcher_imgs = [pygame.image.load(
-    r"used_assets\Towers\archer_top1\{}.png".format(c))
-    for c in range(38, 43)]
-for i in range(len(larcher_imgs)):
-    img = larcher_imgs[i]
-    larcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.5), int(img.get_height() * 0.5)))
 
+# Attack towers:
 class LongArcher(Tower):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -102,19 +93,6 @@ class LongArcher(Tower):
         self.damage += 1
 
 
-# load tower imgs
-stower_imgs = [pygame.transform.scale(pygame.image.load(
-    r"used_assets\Towers\archer_2\{}.png".format(c)), (60, 60))
-    for c in range(10, 13)]
-# load archer imgs
-sarcher_imgs = [pygame.image.load(
-    r"used_assets\Towers\archer_top2\{}.png".format(c))
-    for c in range(44, 51)]
-for i in range(len(sarcher_imgs)):
-    img = sarcher_imgs[i]
-    sarcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.5), int(img.get_height() * 0.5)))
-
-
 class ShortArcher(LongArcher):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -125,6 +103,25 @@ class ShortArcher(LongArcher):
         self.damage = 2
         self.attack_speed = 0.15
         self.range = self.range * 0.6
+
+
+# Support towers:
+class RangeTower(Tower):
+    """
+       Increases attack range
+    """
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.tower_imgs = rtower_imgs
+
+
+class SpeedTower(Tower):
+    """
+    Increases attack speed
+    """
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.tower_imgs = sptower_imgs
 
 
 if __name__ == '__main__':

@@ -14,6 +14,7 @@ class Node:
         self.col = 0
         self.g = math.inf
         self.is_blocked = False
+        self.parent = None
         self.neighbors = []
 
     def update_neighbors(self, grid):
@@ -48,14 +49,14 @@ def heuristic(src, dest):
     return math.dist(src, dest)
 
 
-def reconstruct_path(came_from, current):
+def reconstruct_path(current):
     """
     :returns: list of positions from start to end
     """
     path = []
-    while current in came_from:
-        current = came_from[current]
+    while current.parent is not None:
         path.append((current.row, current.col))
+        current = current.parent
     path.reverse()
     return path
 
@@ -74,18 +75,19 @@ def a_star_search(src, dest, grid):
     open_set.put((f, grid[src[0]][src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
-        current = open_set.get()[1]
+        current = open_set.get()
+        current = current[1]
         if (current.row, current.col) == dest:
-            return reconstruct_path(came_from, current)
+            return reconstruct_path(current)
 
         open_set_hash.remove((current.row, current.col))
         for neighbor in current.neighbors:
             est_g = current.g + heuristic((neighbor.row, neighbor.col), (current.row, current.col))
             if est_g < neighbor.g:
-                came_from[neighbor] = current
+                neighbor.parent = current
                 neighbor.g = est_g
                 f = heuristic((neighbor.row, neighbor.col), dest)
-                if neighbor not in open_set_hash:
+                if (neighbor.row, neighbor.col) not in open_set_hash:
                     open_set_hash.add((neighbor.row, neighbor.col))
                     open_set.put((f, neighbor))
     return False
@@ -114,4 +116,4 @@ if __name__ == '__main__':
     for i in range(MAX_ROW):
         for j in range(MAX_COL):
             grid[i][j].update_neighbors(grid)
-    print(a_star_search((1, 192), (-40, 290), grid))
+    print(a_star_search((192, 1), (290, -40), grid))

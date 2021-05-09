@@ -35,6 +35,7 @@ class Enemy:
         self.images = []  # Class Variable
         self.img = None
         self.out = False
+        self.dead = False
         # to adjust y
         for i in range(len(self.path)):
             self.path[i] = list(self.path[i])
@@ -147,6 +148,6 @@ class Enemy:
         """
         self.health -= damage
         if self.health <= 0:
-            self.out = True
+            self.dead = True
             return True
         return False
