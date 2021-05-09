@@ -3,7 +3,6 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../PythonProjects/Games/AlienInvasion/.idea/AlienInvasion.iml" filepath="$PROJECT_DIR$/../PythonProjects/Games/AlienInvasion/.idea/AlienInvasion.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../.idea/Desktop.iml" filepath="$PROJECT_DIR$/../../.idea/Desktop.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/TowerDefense.iml" filepath="$PROJECT_DIR$/.idea/TowerDefense.iml" />
     </modules>
   </component>

@@ -15,25 +15,26 @@ class Enemy:
     Abstract class for all enemies.
     """
 
-    images = []  # Class Variable
-
     def __init__(self):
-        self.path = [(1, 192), (88, 193), (156, 200), (202, 237), (296, 240), (410, 240), (472, 228), (510, 190),
+        # set attributes
+        self.width = 30
+        self.height = 30
+        self.vel = 2
+        self.max_health = 3
+        self.health = self.max_health
+        self.path = [(-20, 192), (88, 193), (156, 200), (202, 237), (296, 240), (410, 240), (472, 228), (510, 190),
                      (522, 122), (549, 68), (621, 46), (673, 69), (698, 113), (706, 154), (724, 195), (759, 224),
                      (814, 230), (857, 262), (871, 301), (874, 348), (861, 396), (813, 418), (730, 423), (661, 423),
                      (611, 443), (567, 469), (507, 481), (405, 482), (257, 486), (154, 476), (112, 460), (86, 420),
-                     (72, 358), (53, 319), (19, 290), (-40, 290)]
+                     (72, 358), (53, 319), (19, 290), (-self.width, 290)]
         # Movement and animation
         self.new_slope = False
         self.flipped = False
         self.animation_index = 0
         self.path_pos = 0
+        self.images = []  # Class Variable
         self.img = None
-        # set attributes
-        self.width = 30
-        self.height = 30
-        self.vel = 3
-        self.health = 1
+        self.out = False
         # to adjust y
         for i in range(len(self.path)):
             self.path[i] = list(self.path[i])
@@ -45,35 +46,42 @@ class Enemy:
         self.add_x = 0
         self._update_move_values()
 
-    def draw(self, win):
+    def draw(self, screen):
         """
         Draws the enemy
-        :param win: surface
+        :param screen: surface
         :return: None
         """
+        if self.out:
+            return
         # Set enemy
         self.move()
-        self.img = self.images[self.animation_index]
+        # Draw enemy
+        self.img = self.images[int(self.animation_index)]
         self.img = pygame.transform.flip(self.img, self.flipped, False)
+        screen.blit(self.img, (int(self.x), int(self.y)))
+        # Draw Health bar
+        self.draw_health_bar(screen)
 
-        self.img = pygame.transform.scale(self.img, (self.width, self.height))
-        win.blit(self.img, (int(self.x), int(self.y)))
-        # Move to next frame
-        self.animation_index += 1
-        if self.animation_index >= len(self.images):
-            self.animation_index = 0
+    def draw_health_bar(self, screen):
+        """
+        Draws health bar above enemy
+        :param screen: Surface
+        :return: None
+        """
+        length = self.width - 5
+        h_increment = length / self.max_health
+        curr_health = int(self.health * h_increment)
+        pygame.draw.rect(screen, (80, 80, 80), (self.x, self.y - 10, length, 5), 0)
+        pygame.draw.rect(screen, (0, 200, 0), (self.x, self.y - 10, curr_health, 5), 0)
 
     def move(self):
         """
         Moves enemy from current checkpoint to next one
         :return:
         """
-        # Out of frame
-        if (self.path_pos + 1) >= len(self.path):
-            return
-            # Move to next frame
-        self.animation_index += 1
-        # Reset animation
+        # Increase to next frame
+        self.animation_index += 0.6
         if self.animation_index >= len(self.images):
             self.animation_index = 0
         self.x += self.add_x
@@ -103,6 +111,10 @@ class Enemy:
                 self.new_slope = True
         if self.new_slope:  # Calculate next x,y values
             self.path_pos += 1
+            # Out of frame
+            if (self.path_pos + 1) >= len(self.path):
+                self.out = True
+                return
             self._update_move_values()
             self.new_slope = False
 
@@ -123,14 +135,18 @@ class Enemy:
         :param y: int
         :return:
         """
-        if (self.width + self.x) >= x >= self.x and (self.height + self.y) >= y >= self.y:
+        if (self.width + self.x) >= x >= self.x \
+                and (self.height + self.y) >= y >= self.y:
             return True
+        return False
 
-    def hit(self):
+    def hit(self, damage):
         """
-        Removes scorp health and return if enemy has died
+        Removes health and return if enemy has died
         :return: Bool
         """
-        self.health -= 1
+        self.health -= damage
         if self.health <= 0:
-            return False
+            self.out = True
+            return True
+        return False
