@@ -42,9 +42,10 @@ class Menu:
 
     def __init__(self, x, y, tower):
         # For visuals:
-        self.font = pygame.font.SysFont("comicsans", 60)
+        self.font = pygame.font.SysFont("comicsans", 22)
         self.bg = load_assets.menu_bg
         # Attributes:
+        self.tower = tower
         self.x = x
         self.y = y
         self.width = self.bg.get_width()
@@ -58,6 +59,9 @@ class Menu:
         screen.blit(self.bg, (self.x, self.y - 10))
         for item in self.buttons:
             item.draw(screen)
+            screen.blit(load_assets.star, (item.x + item.width + 2, item.y - 5))
+            txt = self.font.render(str(self.tower.upgrade_cost[self.tower.level - 1]), 1, (240, 255, 255))
+            screen.blit(txt, (item.x + item.width + 4, item.y + load_assets.star.get_height()))
 
     def add_item(self, img, name):
         """

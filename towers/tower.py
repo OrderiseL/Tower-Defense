@@ -13,7 +13,7 @@ class Tower:
         self.y = y
         self.width, self.height = (settings.tower_width, settings.tower_height)
         # Attributes:
-        self.upgrade_cost = [2000, 5000, 12000]
+        self.upgrade_cost = [2000, 5000, "MAX"]
         self.sell_cost = [2000, 5000, 12000]
         self.level = 1
         self.range = 100
@@ -69,7 +69,8 @@ class Tower:
         upgrade tower for defined cost
         :return:
         """
-        self.level += 1
+        if (self.level)<len(self.upgrade_cost):
+            self.level += 1
 
     def move(self, x, y):
         """

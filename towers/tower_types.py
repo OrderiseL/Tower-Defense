@@ -133,7 +133,7 @@ class SpeedTower(Tower):
 
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.effect = [0.2, 0.4]
+        self.effect = [0.2, 0.3,0.4]
         self.tower_imgs = sptower_imgs
 
     def support(self, towers):

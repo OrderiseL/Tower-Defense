@@ -77,9 +77,13 @@ class Game:
         """
         pos = pygame.mouse.get_pos()
         # Selected tower:
-        if self.selected_tower and self.selected_tower.menu.is_clicked(pos[0], pos[1]):
-            pass
-        else:
+        btn_clicked = None
+        if self.selected_tower:
+            btn_clicked = self.selected_tower.menu.is_clicked(pos[0], pos[1])
+            if btn_clicked:
+                if btn_clicked == "upgrade":
+                    self.selected_tower.upgrade()
+        if not btn_clicked:
             for tower in (self.support_towers + self.attack_towers):
                 if tower.click(pos[0], pos[1]):
                     self.selected_tower = tower

@@ -81,10 +81,10 @@ for c in range(20):
         )
 
 """Menu:"""
-menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu.png"), (100, 40))
-upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\upgrade.png"), (35, 35))
+menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu.png"), (100, 60))
+upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\upgrade.png"), (40, 40))
 pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_pause.png"), (30, 20))
 play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (30, 20))
-star = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (50, 50)).convert_alpha()
-star_2 = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (20, 20)).convert_alpha()
+star = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (40, 40))
+star_2 = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (20, 20))
 
