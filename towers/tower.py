@@ -1,4 +1,6 @@
 import pygame
+import math
+import settings
 
 
 class Tower:
@@ -7,13 +9,14 @@ class Tower:
         self.tower_imgs = []
         self.x = x
         self.y = y
-        self.width = 60
-        self.height = 60
+        self.width, self.height = (settings.tower_width, settings.tower_height)
         # Attributes:
         self.upgrade_cost = [0, 0, 0]
         self.sell_cost = [0, 0, 0]
         self.level = 1
         self.range = 100
+        self.curr_range = self.range
+        self.in_range = False
         # For interactions:
         self.selected = False
         self.menu = None
@@ -25,9 +28,9 @@ class Tower:
         :return:
         """
         # draw range circle:
-        circle = pygame.Surface((self.range * 4, self.range * 4), pygame.SRCALPHA, 32)
-        pygame.draw.circle(circle, (128, 128, 128, 100), (self.range, self.range), self.range, 0)
-        screen.blit(circle, (self.x - self.range, self.y - self.range))
+        circle = pygame.Surface((self.curr_range * 4, self.curr_range * 4), pygame.SRCALPHA, 32)
+        pygame.draw.circle(circle, (128, 128, 128, 100), (self.curr_range, self.curr_range), self.curr_range, 0)
+        screen.blit(circle, (self.x - self.curr_range, self.y - self.curr_range))
         # Draw tower:
         img = self.tower_imgs[self.level - 1]
         screen.blit(img, (self.x - self.width // 2, self.y - self.height // 2))
@@ -67,3 +70,15 @@ class Tower:
         """
         self.x = x
         self.y = y
+
+    def _check_inrange(self, x, y):
+        """
+        Checks if postion is in range of tower and updates
+        :param x: int
+        :param y: int
+        :return: None
+        """
+        dis = math.dist((self.x, self.y), (x, y))
+        if dis < self.curr_range:
+            return True
+        return False

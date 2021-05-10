@@ -40,8 +40,8 @@ class Node:
         if self.col > 0 and not grid[self.row][self.col - 1].is_blocked:  # LEFT
             self.neighbors.append(grid[self.row][self.col - 1])
 
-    def __eq__(self, other):
-        return (self.row, self.col) == (other.row, other.col)
+    def __lt__(self, other):
+        return other
 
 
 def heuristic(src, dest):
@@ -75,8 +75,8 @@ def a_star_search(src, dest, grid):
     open_set.put((f, grid[src[0]][src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
-        current = open_set.get()
-        current = current[1]
+        current = open_set.get()[1]
+
         if (current.row, current.col) == dest:
             return reconstruct_path(current)
 
@@ -102,6 +102,7 @@ MAX_ROW = img_grid.shape[0]
 MAX_COL = img_grid.shape[1]
 if __name__ == '__main__':
     # Create a Node grid from img grid.
+
     grid = [[]]
     for i in range(MAX_ROW):
         for j in range(MAX_COL):
@@ -116,4 +117,5 @@ if __name__ == '__main__':
     for i in range(MAX_ROW):
         for j in range(MAX_COL):
             grid[i][j].update_neighbors(grid)
+
     print(a_star_search((192, 1), (290, -40), grid))

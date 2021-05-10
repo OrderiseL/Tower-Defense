@@ -1,9 +1,10 @@
 import pygame
+import settings
 
 """For Towers:"""
 # load long tower imgs
 ltower_imgs = [pygame.transform.scale(pygame.image.load(
-    r"used_assets\Towers\archer_1\{}.png".format(c)), (60, 60))
+    r"used_assets\Towers\archer_1\{}.png".format(c)), (settings.tower_width, settings.tower_height))
     for c in range(7, 10)]
 # load long archer imgs
 larcher_imgs = [pygame.image.load(
@@ -11,11 +12,11 @@ larcher_imgs = [pygame.image.load(
     for c in range(38, 43)]
 for i in range(len(larcher_imgs)):
     img = larcher_imgs[i]
-    larcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.5), int(img.get_height() * 0.5)))
+    larcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.7), int(img.get_height() * 0.7)))
 
 # load short tower imgs
 stower_imgs = [pygame.transform.scale(pygame.image.load(
-    r"used_assets\Towers\archer_2\{}.png".format(c)), (60, 60))
+    r"used_assets\Towers\archer_2\{}.png".format(c)), (settings.tower_width, settings.tower_height))
     for c in range(10, 13)]
 # load short archer imgs
 sarcher_imgs = [pygame.image.load(
@@ -23,17 +24,18 @@ sarcher_imgs = [pygame.image.load(
     for c in range(44, 51)]
 for i in range(len(sarcher_imgs)):
     img = sarcher_imgs[i]
-    sarcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.5), int(img.get_height() * 0.5)))
+    sarcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.7), int(img.get_height() * 0.7)))
 
 # load range tower imgs
 rtower_imgs = [pygame.transform.scale(pygame.image.load(
-    r"used_assets\Towers\range\{}.png".format(c)), (60, 60))
+    r"used_assets\Towers\range\{}.png".format(c)), (settings.tower_width, settings.tower_height))
     for c in range(4, 7)]
 
 # load speed tower imgs
 sptower_imgs = [pygame.transform.scale(pygame.image.load(
-    r"used_assets\Towers\speed\{}.png".format(c)), (60, 60))
+    r"used_assets\Towers\speed\{}.png".format(c)), (settings.tower_width, settings.tower_height))
     for c in range(7, 10)]
+
 """For Enemies:"""
 # Load wizard imgs.
 wiz_images = []

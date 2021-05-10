@@ -4,6 +4,8 @@ import math
 from load_assets import *
 
 
+# TODO: Attack first enemy.
+
 # Attack towers:
 class LongArcher(Tower):
     def __init__(self, x, y):
@@ -19,8 +21,9 @@ class LongArcher(Tower):
         # For attacking.
         self.damage = 1
         self.attack_speed = 0.15
+        self.curr_speed = self.attack_speed
         self.range = self.range * 1.5
-        self.in_range = False
+        self.curr_range = self.range
         self.end = False
 
     def draw(self, screen):
@@ -28,7 +31,7 @@ class LongArcher(Tower):
         # Draw attacking motion
         if self.in_range:
             self.end = False
-            self.archer_frame += self.attack_speed
+            self.archer_frame += self.curr_speed
         else:
             self.archer_frame = 0
         if int(self.archer_frame) >= len(self.archer_imgs):
@@ -37,7 +40,7 @@ class LongArcher(Tower):
         archer = self.archer_imgs[int(self.archer_frame)]
         archer = pygame.transform.flip(archer, self.left, False)
         # draw archer at middle of tower.
-        screen.blit(archer, (self.x - 12, self.y - archer.get_height() - 17))
+        screen.blit(archer, (self.x - 20, self.y - archer.get_height() - 20))
 
     def attack(self, enemies):
         """
@@ -63,18 +66,6 @@ class LongArcher(Tower):
                     closest_enemy.remove(first)
         else:
             self.in_range = False
-
-    def _check_inrange(self, x, y):
-        """
-        Checks if postion is in range of tower and updates
-        :param x: int
-        :param y: int
-        :return: None
-        """
-        dis = math.dist((self.x, self.y), (x, y))
-        if dis < self.range:
-            return True
-        return False
 
     def _update_direction(self, x, y):
         """
@@ -102,7 +93,9 @@ class ShortArcher(LongArcher):
         # For attacks:
         self.damage = 2
         self.attack_speed = 0.15
+        self.curr_speed = self.attack_speed
         self.range = self.range * 0.6
+        self.curr_range = self.range
 
 
 # Support towers:
@@ -110,18 +103,54 @@ class RangeTower(Tower):
     """
        Increases attack range
     """
+
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.effect = [0.2, 0.4]
         self.tower_imgs = rtower_imgs
+
+    def support(self, towers):
+        """
+        modify towers according to ability
+        :param towers: list
+        :return:
+        """
+        affected = []
+        for tower in towers:
+            to_x = tower.x + towers.width
+            to_y = tower.y + towers.height
+            if self._check_inrange(to_x, to_y):
+                self.in_range = True
+                affected.append(tower)
+        for tower in affected:
+            tower.curr_range = tower.range + round(tower.range * self.effect[self.level - 1])
 
 
 class SpeedTower(Tower):
     """
     Increases attack speed
     """
+
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.effect = [0.2, 0.4]
         self.tower_imgs = sptower_imgs
+
+    def support(self, towers):
+        """
+        modify towers according to ability
+        :param towers: list
+        :return:
+        """
+        affected = []
+        for tower in towers:
+            to_x = tower.x + tower.width
+            to_y = tower.y + tower.height
+            if self._check_inrange(to_x, to_y):
+                self.in_range = True
+                affected.append(tower)
+        for tower in affected:
+            tower.curr_speed = tower.attack_speed + tower.attack_speed * self.effect[self.level - 1]
 
 
 if __name__ == '__main__':

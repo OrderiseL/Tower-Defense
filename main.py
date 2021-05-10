@@ -1,6 +1,6 @@
 import pygame
 from enemies.enemy_types import *
-from settings import Settings
+import settings
 from towers.tower_types import *
 import random
 import time
@@ -18,12 +18,11 @@ class Game:
         self.active = True
         self.timer = time.time()
         # initalize main window settings
-        self.settings = Settings()
-        self.screen = pygame.display.set_mode((self.settings.scr_width, self.settings.scr_height))
+        self.screen = pygame.display.set_mode((settings.scr_width, settings.scr_height))
         # Objects
         self.enemies = []
         self.attack_towers = [LongArcher(300, 300), ShortArcher(800, 300)]
-        self.support_towers = [SpeedTower(400,400)]
+        self.support_towers = [SpeedTower(300, 400)]
         # Player resources
         self.lives = 10
         self.money = 100
@@ -55,6 +54,9 @@ class Game:
             if self.enemies:
                 for tw in self.attack_towers:
                     tw.attack(self.enemies)
+            # Support towers:
+            for tower in self.support_towers:
+                tower.support(self.attack_towers)
         pygame.quit()
 
     def _check_events(self):
@@ -67,7 +69,7 @@ class Game:
 
     def _update_screen(self):
         # Draw background
-        self.screen.blit(self.settings.bg, (0, 0))
+        self.screen.blit(settings.bg, (0, 0))
         # Draw objects
         for enemy in self.enemies:
             enemy.draw(self.screen)
@@ -76,9 +78,9 @@ class Game:
         for tower in self.support_towers:
             tower.draw(self.screen)
         # Draw lives
-        txt = font.render(str(self.lives), 1, (255,255,255))
+        txt = font.render(str(self.lives), 1, (255, 255, 255))
         self.screen.blit(heart, (self.screen.get_width() - heart.get_width() - 10, 10))
-        self.screen.blit(txt, (self.screen.get_width() - heart.get_width()-txt.get_width() - 10, 10))
+        self.screen.blit(txt, (self.screen.get_width() - heart.get_width() - txt.get_width() - 10, 10))
         pygame.display.update()
 
 
