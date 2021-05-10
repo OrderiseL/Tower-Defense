@@ -1,6 +1,8 @@
 import pygame
 import math
 import settings
+from menu.menu import Menu
+import load_assets
 
 
 class Tower:
@@ -11,15 +13,17 @@ class Tower:
         self.y = y
         self.width, self.height = (settings.tower_width, settings.tower_height)
         # Attributes:
-        self.upgrade_cost = [0, 0, 0]
-        self.sell_cost = [0, 0, 0]
+        self.upgrade_cost = [2000, 5000, 12000]
+        self.sell_cost = [2000, 5000, 12000]
         self.level = 1
         self.range = 100
         self.curr_range = self.range
         self.in_range = False
         # For interactions:
         self.selected = False
-        self.menu = None
+        # Define menu
+        self.menu = Menu(self.x - 100, self.y,self)
+        self.menu.add_item(load_assets.upgrade_img, "upgrade")
 
     def draw(self, screen):
         """
@@ -35,6 +39,9 @@ class Tower:
         # Draw tower:
         img = self.tower_imgs[self.level - 1]
         screen.blit(img, (self.x - self.width // 2, self.y - self.height // 2))
+        # Draw menu:
+        if self.selected:
+            self.menu.draw(screen)
 
     def click(self, x, y):
         """
@@ -43,8 +50,8 @@ class Tower:
         :param y:
         :return: bool
         """
-        if (self.width// 2 + self.x) >= x >= (self.x - self.width // 2) \
-                and (self.height// 2 + self.y) >= y >= (self.y- self.height // 2):
+        if (self.width // 2 + self.x) >= x >= (self.x - self.width // 2) \
+                and (self.height // 2 + self.y) >= y >= (self.y - self.height // 2):
             self.selected = True
             return True
         self.selected = False
