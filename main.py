@@ -1,9 +1,13 @@
+from typing import List, Union
+
 import pygame
 from enemies.enemy_types import *
 import settings
 from towers.tower_types import *
 import random
 import time
+
+from towers.tower_types import ShortArcher, LongArcher
 
 pygame.init()
 pygame.font.init()
@@ -14,6 +18,8 @@ font = pygame.font.SysFont("comicsans", 60)
 
 
 class Game:
+    attack_towers: List[Union[LongArcher, ShortArcher]]
+
     def __init__(self):
         self.active = True
         self.timer = time.time()
@@ -23,6 +29,7 @@ class Game:
         self.enemies = []
         self.attack_towers = [LongArcher(300, 300), ShortArcher(800, 300)]
         self.support_towers = [SpeedTower(300, 400)]
+        self.selected_tower = None
         # Player resources
         self.lives = 10
         self.money = 100
@@ -65,7 +72,15 @@ class Game:
                 print("Exit")
                 self.active = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                pass
+                self._mouse_down_events()
+
+    def _mouse_down_events(self):
+        pos = pygame.mouse.get_pos()
+        # Selected tower:
+        for tower in (self.support_towers + self.attack_towers):
+            if tower.click(pos[0], pos[1]):
+                self.selected_tower = tower
+
 
     def _update_screen(self):
         # Draw background

@@ -28,9 +28,10 @@ class Tower:
         :return:
         """
         # draw range circle:
-        circle = pygame.Surface((self.curr_range * 4, self.curr_range * 4), pygame.SRCALPHA, 32)
-        pygame.draw.circle(circle, (128, 128, 128, 100), (self.curr_range, self.curr_range), self.curr_range, 0)
-        screen.blit(circle, (self.x - self.curr_range, self.y - self.curr_range))
+        if self.selected:
+            circle = pygame.Surface((self.curr_range * 4, self.curr_range * 4), pygame.SRCALPHA, 32)
+            pygame.draw.circle(circle, (128, 128, 128, 100), (self.curr_range, self.curr_range), self.curr_range, 0)
+            screen.blit(circle, (self.x - self.curr_range, self.y - self.curr_range))
         # Draw tower:
         img = self.tower_imgs[self.level - 1]
         screen.blit(img, (self.x - self.width // 2, self.y - self.height // 2))
@@ -42,10 +43,12 @@ class Tower:
         :param y:
         :return: bool
         """
-        if (self.width + self.x) >= x >= self.x \
-                and (self.height + self.y) >= y >= self.y:
+        if (self.width// 2 + self.x) >= x >= (self.x - self.width // 2) \
+                and (self.height// 2 + self.y) >= y >= (self.y- self.height // 2):
+            self.selected = True
             return True
-        pass
+        self.selected = False
+        return False
 
     def sell(self):
         """

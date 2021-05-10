@@ -117,8 +117,8 @@ class RangeTower(Tower):
         """
         affected = []
         for tower in towers:
-            to_x = tower.x + towers.width
-            to_y = tower.y + towers.height
+            to_x = tower.x + tower.width
+            to_y = tower.y + tower.height
             if self._check_inrange(to_x, to_y):
                 self.in_range = True
                 affected.append(tower)
