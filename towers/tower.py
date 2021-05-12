@@ -29,9 +29,9 @@ class Tower:
 
     def draw(self, screen):
         """
-        draws the tower
-        :param screen:
-        :return:
+        draws the tower according to state(moving/placed)
+        :param screen: Surface
+        :return: None
         """
         if self.moving:
             self._draw_moving(screen)

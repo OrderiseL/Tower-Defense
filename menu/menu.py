@@ -60,6 +60,11 @@ class Menu:
         # For interactions:
 
     def draw(self, screen):
+        """
+        Draws menu, buttons and price
+        :param screen: Surface
+        :return:
+        """
         screen.blit(self.bg, (self.x, self.y - 10))
         for item in self.buttons:
             item.draw(screen)
@@ -90,7 +95,13 @@ class Menu:
         return None
 
     def update(self, x, y):
-        self.x = x
+        """
+        Update menu and buttons
+        :param x: int
+        :param y: int
+        :return: None
+        """
+        self.x = x-100
         self.y = y
         for btn in self.buttons:
             btn.update_pos()

@@ -28,6 +28,11 @@ class LongArcher(Tower):
         self.end = False
 
     def draw(self, screen):
+        """
+        Draw tower+radius then animated archers
+        :param screen: Surface
+        :return: None
+        """
         super().draw(screen)
         if not self.moving:
             # Draw attacking motion
