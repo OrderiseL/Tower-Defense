@@ -83,8 +83,8 @@ for c in range(20):
 """Menu:"""
 menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu.png"), (100, 60))
 upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\upgrade.png"), (40, 40))
-pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_pause.png"), (30, 20))
-play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (30, 20))
+pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_pause.png"), (70, 70))
+play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (70, 70))
 star = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (40, 40))
 star_2 = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (20, 20))
 vert_menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu\window_3.png"), (80, 400))
@@ -93,3 +93,6 @@ buy_long = pygame.transform.scale(pygame.image.load(r"used_assets\buy_long.png")
 buy_range = pygame.transform.scale(pygame.image.load(r"used_assets\buy_range.png"), (60, 55))
 buy_short = pygame.transform.scale(pygame.image.load(r"used_assets\buy_short.png"), (60, 55))
 buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets\buy_speed.png"), (60, 55))
+
+start_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_start.png"), (70, 70))
+wave_img = pygame.transform.scale(pygame.image.load(r"used_assets\wave.png"), (200, 60))

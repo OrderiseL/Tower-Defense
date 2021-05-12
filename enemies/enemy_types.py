@@ -20,7 +20,6 @@ class Scorpion(Enemy):
     def __init__(self):
         super().__init__()
         # Attributes:
-        self.speed = 3
         self.worth = 30
         self.max_health = 1
         self.health = self.max_health

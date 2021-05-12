@@ -41,6 +41,23 @@ class Button:
         self.y = self.menu.y - 7
 
 
+class PlayPauseButton(Button):
+    def __init__(self, x, y):
+        self.play_img = load_assets.start_img
+        self.pause_img = load_assets.pause_img
+        self.img = self.play_img
+        self.x = x
+        self.y = y
+        self.width = self.img.get_width()
+        self.height = self.img.get_height()
+
+    def change_img(self):
+        if self.img == self.play_img:
+            self.img = self.pause_img
+        else:
+            self.img = self.play_img
+
+
 class Menu:
     """Menu for holding buttons"""
 
@@ -101,7 +118,7 @@ class Menu:
         :param y: int
         :return: None
         """
-        self.x = x-100
+        self.x = x - 100
         self.y = y
         for btn in self.buttons:
             btn.update_pos()
