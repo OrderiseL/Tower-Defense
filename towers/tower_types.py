@@ -17,6 +17,7 @@ class LongArcher(Tower):
         self.tower_imgs = ltower_imgs[:]
         # load archer imgs
         self.archer_imgs = larcher_imgs[:]
+        self.type = "attack"
 
         # For attacking.
         self.damage = 1
@@ -28,19 +29,20 @@ class LongArcher(Tower):
 
     def draw(self, screen):
         super().draw(screen)
-        # Draw attacking motion
-        if self.in_range:
-            self.end = False
-            self.archer_frame += self.curr_speed
-        else:
-            self.archer_frame = 0
-        if int(self.archer_frame) >= len(self.archer_imgs):
-            self.end = True
-            self.archer_frame = 0
-        archer = self.archer_imgs[int(self.archer_frame)]
-        archer = pygame.transform.flip(archer, self.left, False)
-        # draw archer at middle of tower.
-        screen.blit(archer, (self.x - 20, self.y - archer.get_height() - 20))
+        if not self.moving:
+            # Draw attacking motion
+            if self.in_range:
+                self.end = False
+                self.archer_frame += self.curr_speed
+            else:
+                self.archer_frame = 0
+            if int(self.archer_frame) >= len(self.archer_imgs):
+                self.end = True
+                self.archer_frame = 0
+            archer = self.archer_imgs[int(self.archer_frame)]
+            archer = pygame.transform.flip(archer, self.left, False)
+            # draw archer at middle of tower.
+            screen.blit(archer, (self.x - 20, self.y - archer.get_height() - 20))
 
     def attack(self, enemies):
         """
@@ -111,6 +113,8 @@ class RangeTower(Tower):
 
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.type = "support"
+
         self.effect = [0.2, 0.4]
         self.tower_imgs = rtower_imgs
 
@@ -138,6 +142,7 @@ class SpeedTower(Tower):
 
     def __init__(self, x, y):
         super().__init__(x, y)
+        self.type = "support"
         self.effect = [0.2, 0.3, 0.4]
         self.tower_imgs = sptower_imgs
 

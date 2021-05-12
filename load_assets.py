@@ -87,4 +87,9 @@ pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_p
 play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (30, 20))
 star = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (40, 40))
 star_2 = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (20, 20))
-
+vert_menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu\window_3.png"), (80, 400))
+# Buy stuff:
+buy_long = pygame.transform.scale(pygame.image.load(r"used_assets\buy_long.png"), (60, 55))
+buy_range = pygame.transform.scale(pygame.image.load(r"used_assets\buy_range.png"), (60, 55))
+buy_short = pygame.transform.scale(pygame.image.load(r"used_assets\buy_short.png"), (60, 55))
+buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets\buy_speed.png"), (60, 55))

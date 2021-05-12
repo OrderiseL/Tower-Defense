@@ -36,6 +36,10 @@ class Button:
     def draw(self, screen):
         screen.blit(self.img, (self.x, self.y))
 
+    def update_pos(self):
+        self.x = self.menu.x + 2
+        self.y = self.menu.y - 7
+
 
 class Menu:
     """Menu for holding buttons"""
@@ -71,7 +75,6 @@ class Menu:
         :return: None
         """
         self.item_count += 1
-        inc_x = self.width / self.item_count / 2
         self.buttons.append(Button(self, img, name))
 
     def is_clicked(self, x, y):
@@ -86,11 +89,46 @@ class Menu:
                 return item.name
         return None
 
+    def update(self, x, y):
+        self.x = x
+        self.y = y
+        for btn in self.buttons:
+            btn.update_pos()
+
+
+class VerticalButton(Button):
+    def __init__(self, menu, img, name):
+        super().__init__(menu, img, name)
+        self.y += self.menu.item_count * 10 + 1.5 * self.height * self.menu.item_count + 10
+
 
 class VerticalMenu(Menu):
+    """Menu for buying towers"""
+
     def __init__(self, x, y):
         super().__init__(x, y, None)
-        self.bg = self.bg
+        self.bg = load_assets.vert_menu_bg
+        self.width = self.bg.get_width()
+        self.height = self.bg.get_height()
+        self.items_costs = {"range": 800, "speed": 800, "long": 500, "short": 500}
+        self.x -= self.width
+        self._create_buttons()
 
-    def add_btn(self):
-        pass
+    def draw(self, screen):
+        screen.blit(self.bg, (self.x, self.y - 10))
+        for item in self.buttons:
+            item.draw(screen)
+            st = pygame.transform.scale(load_assets.star, (30, 30))
+            screen.blit(st, (item.x + 5, item.y + item.height + 2))
+            txt = self.font.render(str(self.items_costs[item.name]), 1, (240, 255, 255))
+            screen.blit(txt, (item.x + 5 + st.get_width(), item.y + item.height + 10))
+
+    def _create_buttons(self):
+        self.buttons.append(VerticalButton(self, load_assets.buy_long, "long"))
+        self.item_count += 1
+        self.buttons.append(VerticalButton(self, load_assets.buy_short, "short"))
+        self.item_count += 1
+        self.buttons.append(VerticalButton(self, load_assets.buy_range, "range"))
+        self.item_count += 1
+        self.buttons.append(VerticalButton(self, load_assets.buy_speed, "speed"))
+        self.item_count += 1

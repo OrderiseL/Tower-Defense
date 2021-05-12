@@ -13,6 +13,7 @@ class Tower:
         self.y = y
         self.width, self.height = (settings.tower_width, settings.tower_height)
         # Attributes:
+        self.type = ""
         self.upgrade_cost = [2000, 5000, "MAX"]
         self.sell_cost = [2000, 5000, 12000]
         self.level = 1
@@ -21,6 +22,7 @@ class Tower:
         self.in_range = False
         # For interactions:
         self.selected = False
+        self.moving = False
         # Define menu
         self.menu = Menu(self.x - 100, self.y, self)
         self.menu.add_item(load_assets.upgrade_img, "upgrade")
@@ -31,7 +33,10 @@ class Tower:
         :param screen:
         :return:
         """
-        # draw range circle:
+        if self.moving:
+            self._draw_moving(screen)
+            return
+            # draw range circle:
         if self.selected:
             circle = pygame.Surface((self.curr_range * 4, self.curr_range * 4), pygame.SRCALPHA, 32)
             pygame.draw.circle(circle, (128, 128, 128, 100), (self.curr_range, self.curr_range), self.curr_range, 0)
@@ -85,6 +90,7 @@ class Tower:
         """
         self.x = x
         self.y = y
+        self.menu.update(x,y)
 
     def _check_inrange(self, x, y):
         """
@@ -97,3 +103,6 @@ class Tower:
         if dis < self.curr_range:
             return True
         return False
+
+    def _draw_moving(self, screen):
+       pass

@@ -5,6 +5,7 @@ import settings
 from towers.tower_types import *
 import random
 import time
+from menu.menu import VerticalMenu
 
 pygame.init()
 pygame.font.init()
@@ -26,6 +27,8 @@ class Game:
         self.attack_towers = [ShortArcher(800, 300)]
         self.support_towers = [SpeedTower(300, 400)]
         self.selected_tower = None
+        self.buy_menu = VerticalMenu(settings.scr_width, 100)
+        self.moving_object = None
         # Player resources
         self.lives = 10
         self.money = 2000
@@ -56,10 +59,13 @@ class Game:
             # Check attack_towers:
             if self.enemies:
                 for tw in self.attack_towers:
-                    self.money+=tw.attack(self.enemies)
+                    self.money += tw.attack(self.enemies)
             # Support towers:
             for tower in self.support_towers:
                 tower.support(self.attack_towers)
+            if self.moving_object:
+                pos = pygame.mouse.get_pos()
+                self.moving_object.move(pos[0], pos[1])
         pygame.quit()
 
     def _check_events(self):
@@ -76,6 +82,19 @@ class Game:
         :return: None
         """
         pos = pygame.mouse.get_pos()
+
+        if self.moving_object:
+            self._place_object(pos)
+        # Handle click on tower:
+        if not self._tower_press(pos):
+            self._menu_press(pos)
+
+    def _tower_press(self, pos):
+        """
+        Handles if clicked on tower and returns if clicked
+        :param pos: x,y
+        :return: bool
+        """
         # Selected tower:
         btn_clicked = None
         if self.selected_tower:
@@ -84,21 +103,48 @@ class Game:
                 if btn_clicked == "upgrade":
                     price = self.selected_tower.upgrade(self.money)
                     self.money -= price
+                    return True
         if not btn_clicked:
             for tower in (self.support_towers + self.attack_towers):
                 if tower.click(pos[0], pos[1]):
                     self.selected_tower = tower
+                    return True
+        return False
+
+    def _menu_press(self, pos):
+        """
+        Handles if clicked on menu and returns if clicked
+        :param pos: x,y
+        :return: bool
+        """
+        x, y = pos[:]
+        name_list = ["range", "speed", "long", "short"]
+        # Selected tower:
+        btn_clicked = self.buy_menu.is_clicked(x, y)
+        if btn_clicked in name_list:
+            obj_list = [RangeTower(x, y), SpeedTower(x, y), LongArcher(x, y), ShortArcher(x, y)]
+            self.moving_object = obj_list[name_list.index(btn_clicked)]
+            self.moving_object.moving = True
+
+    def _place_object(self, pos):
+        self.moving_object.moving = False
+        if self.moving_object.type == "attack":
+            self.attack_towers.append(self.moving_object)
+        else:
+            self.support_towers.append(self.moving_object)
+        self.moving_object = None
 
     def _update_screen(self):
         # Draw background
         self.screen.blit(settings.bg, (0, 0))
-        # Draw objects
-        for enemy in self.enemies:
-            enemy.draw(self.screen)
-        for tower in self.attack_towers:
-            tower.draw(self.screen)
-        for tower in self.support_towers:
-            tower.draw(self.screen)
+        self._draw_objects()
+        self._draw_possesions()
+        # Draw buy menu
+        self.buy_menu.draw(self.screen)
+
+        pygame.display.update()
+
+    def _draw_possesions(self):
         # Draw lives
         txt = font.render(str(self.lives), 1, (255, 255, 255))
         self.screen.blit(heart, (self.screen.get_width() - heart.get_width() - 10, 10))
@@ -107,9 +153,18 @@ class Game:
         txt = font.render(str(self.money), 1, (255, 255, 255))
         self.screen.blit(star_img, (self.screen.get_width() - star_img.get_width() - 10, 10 + heart.get_height()))
         self.screen.blit(txt, (
-        self.screen.get_width() - star_img.get_width() - txt.get_width() - 10, 10 + heart.get_height()))
+            self.screen.get_width() - star_img.get_width() - txt.get_width() - 10, 10 + heart.get_height()))
 
-        pygame.display.update()
+    def _draw_objects(self):
+        # Draw objects
+        for enemy in self.enemies:
+            enemy.draw(self.screen)
+        for tower in self.attack_towers:
+            tower.draw(self.screen)
+        for tower in self.support_towers:
+            tower.draw(self.screen)
+        if self.moving_object:
+            self.moving_object.draw(self.screen)
 
 
 if __name__ == '__main__':
