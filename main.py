@@ -175,17 +175,22 @@ class Game:
         if btn_clicked:
             cost = self.buy_menu.items_costs[btn_clicked]
             if cost <= self.money:
-                self.money -= cost
                 obj_list = [RangeTower(x, y), SpeedTower(x, y), LongArcher(x, y), ShortArcher(x, y)]
                 self.moving_object = obj_list[name_list.index(btn_clicked)]
+                self.moving_object.cost = cost
                 self.moving_object.moving = True
 
     def _place_object(self, pos):
+        for tower in (self.support_towers + self.attack_towers):
+            if self.moving_object.has_collided(tower):
+                self.moving_object = None
+                return False
         self.moving_object.moving = False
         if self.moving_object.type == "attack":
             self.attack_towers.append(self.moving_object)
         else:
             self.support_towers.append(self.moving_object)
+        self.money -= self.moving_object.cost
         self.moving_object = None
 
     def _update_screen(self):
@@ -211,7 +216,7 @@ class Game:
         self.screen.blit(txt, (
             self.screen.get_width() - star_img.get_width() - txt.get_width() - 10, 10 + heart.get_height()))
         # Draw wave
-        txt = font.render("Wave #"+str(self.wave_num), 1, (255, 255, 255))
+        txt = font.render("Wave #" + str(self.wave_num), 1, (255, 255, 255))
         self.screen.blit(wave_img, (10, 10))
         self.screen.blit(txt, (40, 25))
 
@@ -219,10 +224,11 @@ class Game:
         # Draw objects
         for enemy in self.enemies:
             enemy.draw(self.screen)
-        for tower in self.attack_towers:
+        for tower in (self.support_towers + self.attack_towers):
+            if self.moving_object:
+                tower.draw_placement(self.screen)
             tower.draw(self.screen)
-        for tower in self.support_towers:
-            tower.draw(self.screen)
+
         if self.moving_object:
             self.moving_object.draw(self.screen)
 

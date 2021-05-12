@@ -13,6 +13,7 @@ class Tower:
         self.y = y
         self.width, self.height = (settings.tower_width, settings.tower_height)
         # Attributes:
+        self.cost = 0
         self.type = ""
         self.upgrade_cost = [2000, 5000, "MAX"]
         self.sell_cost = [2000, 5000, 12000]
@@ -47,6 +48,13 @@ class Tower:
         # Draw menu:
         if self.selected:
             self.menu.draw(screen)
+
+    def draw_placement(self, screen):
+        # draw range circle
+        surface = pygame.Surface((self.range * 4, self.range * 4), pygame.SRCALPHA, 32)
+        pygame.draw.circle(surface, (200, 0, 0,100), (50, 50), 50, 0)
+
+        screen.blit(surface, (self.x - 50, self.y - 50))
 
     def click(self, x, y):
         """
@@ -112,3 +120,13 @@ class Tower:
         # Draw tower:
         img = self.tower_imgs[self.level - 1]
         screen.blit(img, (self.x - self.width // 2, self.y - self.height // 2))
+
+    def has_collided(self, other):
+        x2 = other.x
+        y2 = other.y
+
+        dist = math.sqrt((x2 - self.x) ** 2 + (y2 - self.y) ** 2)
+        if dist >= self.height:
+            return False
+        else:
+            return True
