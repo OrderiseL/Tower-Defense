@@ -20,7 +20,7 @@ class Enemy:
         self.worth = 50
         self.width = 30
         self.height = 30
-        self.vel = 2
+        self.speed = 2
         self.max_health = 3
         self.health = self.max_health
         self.path = [(-20, 192), (88, 193), (156, 200), (202, 237), (296, 240), (410, 240), (472, 228), (510, 190),
@@ -80,10 +80,10 @@ class Enemy:
     def move(self):
         """
         Moves enemy from current checkpoint to next one
-        :return:
+        :return: None
         """
         # Increase to next frame
-        self.animation_index += 0.6
+        self.animation_index += self.speed / 5
         if self.animation_index >= len(self.images):
             self.animation_index = 0
         self.x += self.add_x
@@ -125,8 +125,8 @@ class Enemy:
         start_p = list((self.x, self.y))
         end_p = list(self.path[self.path_pos + 1])
         d = math.dist(start_p, end_p)
-        xp = (start_p[0] * (d - self.vel) + end_p[0] * self.vel) / d
-        yp = (start_p[1] * (d - self.vel) + end_p[1] * self.vel) / d
+        xp = (start_p[0] * (d - self.speed) + end_p[0] * self.speed) / d
+        yp = (start_p[1] * (d - self.speed) + end_p[1] * self.speed) / d
         self.add_x = xp - start_p[0]
         self.add_y = yp - start_p[1]
 

@@ -23,7 +23,7 @@ class Game:
         self.screen = pygame.display.set_mode((settings.scr_width, settings.scr_height))
         # Objects
         self.enemies = []
-        self.attack_towers = [LongArcher(300, 300), ShortArcher(800, 300)]
+        self.attack_towers = [ShortArcher(800, 300)]
         self.support_towers = [SpeedTower(300, 400)]
         self.selected_tower = None
         # Player resources
