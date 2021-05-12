@@ -90,7 +90,7 @@ class Tower:
         """
         self.x = x
         self.y = y
-        self.menu.update(x,y)
+        self.menu.update(x, y)
 
     def _check_inrange(self, x, y):
         """
@@ -105,4 +105,10 @@ class Tower:
         return False
 
     def _draw_moving(self, screen):
-       pass
+        # draw range circle:
+        circle = pygame.Surface((self.curr_range * 2, self.curr_range * 2), pygame.SRCALPHA, 32)
+        pygame.draw.circle(circle, (0, 128, 128, 100), (self.curr_range, self.curr_range), self.curr_range, 0)
+        screen.blit(circle, (self.x - self.curr_range, self.y - self.curr_range))
+        # Draw tower:
+        img = self.tower_imgs[self.level - 1]
+        screen.blit(img, (self.x - self.width // 2, self.y - self.height // 2))

@@ -31,7 +31,7 @@ class Game:
         self.moving_object = None
         # Player resources
         self.lives = 10
-        self.money = 2000
+        self.money = 600
 
     def run(self):
         """Function to run game"""
@@ -82,11 +82,12 @@ class Game:
         :return: None
         """
         pos = pygame.mouse.get_pos()
-
+        # Handle tower placement:
         if self.moving_object:
             self._place_object(pos)
         # Handle click on tower:
-        if not self._tower_press(pos):
+        elif not self._tower_press(pos):
+            # Handle click on buy menu:
             self._menu_press(pos)
 
     def _tower_press(self, pos):
@@ -95,6 +96,7 @@ class Game:
         :param pos: x,y
         :return: bool
         """
+        clicked = False
         # Selected tower:
         btn_clicked = None
         if self.selected_tower:
@@ -103,13 +105,13 @@ class Game:
                 if btn_clicked == "upgrade":
                     price = self.selected_tower.upgrade(self.money)
                     self.money -= price
-                    return True
+                    clicked= True
         if not btn_clicked:
             for tower in (self.support_towers + self.attack_towers):
                 if tower.click(pos[0], pos[1]):
                     self.selected_tower = tower
-                    return True
-        return False
+                    clicked = True
+        return clicked
 
     def _menu_press(self, pos):
         """
@@ -119,12 +121,15 @@ class Game:
         """
         x, y = pos[:]
         name_list = ["range", "speed", "long", "short"]
-        # Selected tower:
+        # Selected purchase:
         btn_clicked = self.buy_menu.is_clicked(x, y)
-        if btn_clicked in name_list:
-            obj_list = [RangeTower(x, y), SpeedTower(x, y), LongArcher(x, y), ShortArcher(x, y)]
-            self.moving_object = obj_list[name_list.index(btn_clicked)]
-            self.moving_object.moving = True
+        if btn_clicked:
+            cost = self.buy_menu.items_costs[btn_clicked]
+            if cost <= self.money:
+                self.money -= cost
+                obj_list = [RangeTower(x, y), SpeedTower(x, y), LongArcher(x, y), ShortArcher(x, y)]
+                self.moving_object = obj_list[name_list.index(btn_clicked)]
+                self.moving_object.moving = True
 
     def _place_object(self, pos):
         self.moving_object.moving = False
