@@ -85,3 +85,12 @@ class Menu:
             if item.clicked(x, y):
                 return item.name
         return None
+
+
+class VerticalMenu(Menu):
+    def __init__(self, x, y):
+        super().__init__(x, y, None)
+        self.bg = self.bg
+
+    def add_btn(self):
+        pass

@@ -48,7 +48,7 @@ class LongArcher(Tower):
         :param enemies: enemies list
         :return: None
         """
-
+        worth = 0
         closest_enemy = []
         for enemy in enemies:
             en_x = enemy.x + enemy.width
@@ -62,10 +62,13 @@ class LongArcher(Tower):
             self._update_direction(first.x, first.y)
             # Attack when archer finished motion.
             if self.end:
-                if first.hit(self.damage):
+                worth = first.hit(self.damage)
+                if worth:
                     closest_enemy.remove(first)
+                    return worth
         else:
             self.in_range = False
+        return worth
 
     def _update_direction(self, x, y):
         """
@@ -79,9 +82,11 @@ class LongArcher(Tower):
         else:
             self.left = False
 
-    def upgrade(self):
-        super().upgrade()
-        self.damage += 1
+    def upgrade(self, money):
+        price = super().upgrade(money)
+        if price:
+            self.damage += 1
+        return price
 
 
 class ShortArcher(LongArcher):
@@ -133,7 +138,7 @@ class SpeedTower(Tower):
 
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.effect = [0.2, 0.3,0.4]
+        self.effect = [0.2, 0.3, 0.4]
         self.tower_imgs = sptower_imgs
 
     def support(self, towers):

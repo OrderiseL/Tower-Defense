@@ -17,6 +17,7 @@ class Enemy:
 
     def __init__(self):
         # set attributes
+        self.worth = 50
         self.width = 30
         self.height = 30
         self.vel = 2
@@ -149,5 +150,5 @@ class Enemy:
         self.health -= damage
         if self.health <= 0:
             self.dead = True
-            return True
-        return False
+            return self.worth
+        return 0

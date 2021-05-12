@@ -118,4 +118,4 @@ if __name__ == '__main__':
         for j in range(MAX_COL):
             grid[i][j].update_neighbors(grid)
 
-    print(a_star_search((192, 1), (290, -40), grid))
+    print(a_star_search((192, 1), (290, 0), grid))

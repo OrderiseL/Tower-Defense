@@ -22,7 +22,7 @@ class Tower:
         # For interactions:
         self.selected = False
         # Define menu
-        self.menu = Menu(self.x - 100, self.y,self)
+        self.menu = Menu(self.x - 100, self.y, self)
         self.menu.add_item(load_assets.upgrade_img, "upgrade")
 
     def draw(self, screen):
@@ -64,13 +64,17 @@ class Tower:
         """
         pass
 
-    def upgrade(self):
+    def upgrade(self, money):
         """
-        upgrade tower for defined cost
-        :return:
+        upgrade tower for defined cost and return if successful
+        :return: price
         """
-        if (self.level)<len(self.upgrade_cost):
-            self.level += 1
+        if self.level < len(self.upgrade_cost):
+            price = self.upgrade_cost[self.level - 1]
+            if money >= price:
+                self.level += 1
+                return price
+        return 0
 
     def move(self, x, y):
         """

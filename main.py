@@ -11,7 +11,7 @@ pygame.font.init()
 
 heart = pygame.transform.scale(pygame.image.load("used_assets\heart.png"), (36, 36))
 star_img = pygame.image.load("used_assets\star.png")
-font = pygame.font.SysFont("comicsans", 60)
+font = pygame.font.SysFont("comicsans", 55)
 
 
 class Game:
@@ -28,7 +28,7 @@ class Game:
         self.selected_tower = None
         # Player resources
         self.lives = 10
-        self.money = 100
+        self.money = 2000
 
     def run(self):
         """Function to run game"""
@@ -56,7 +56,7 @@ class Game:
             # Check attack_towers:
             if self.enemies:
                 for tw in self.attack_towers:
-                    tw.attack(self.enemies)
+                    self.money+=tw.attack(self.enemies)
             # Support towers:
             for tower in self.support_towers:
                 tower.support(self.attack_towers)
@@ -82,7 +82,8 @@ class Game:
             btn_clicked = self.selected_tower.menu.is_clicked(pos[0], pos[1])
             if btn_clicked:
                 if btn_clicked == "upgrade":
-                    self.selected_tower.upgrade()
+                    price = self.selected_tower.upgrade(self.money)
+                    self.money -= price
         if not btn_clicked:
             for tower in (self.support_towers + self.attack_towers):
                 if tower.click(pos[0], pos[1]):
@@ -102,6 +103,12 @@ class Game:
         txt = font.render(str(self.lives), 1, (255, 255, 255))
         self.screen.blit(heart, (self.screen.get_width() - heart.get_width() - 10, 10))
         self.screen.blit(txt, (self.screen.get_width() - heart.get_width() - txt.get_width() - 10, 10))
+        # Draw money
+        txt = font.render(str(self.money), 1, (255, 255, 255))
+        self.screen.blit(star_img, (self.screen.get_width() - star_img.get_width() - 10, 10 + heart.get_height()))
+        self.screen.blit(txt, (
+        self.screen.get_width() - star_img.get_width() - txt.get_width() - 10, 10 + heart.get_height()))
+
         pygame.display.update()
 
 
