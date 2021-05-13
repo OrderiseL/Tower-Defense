@@ -1,4 +1,3 @@
-from typing import List, Union
 import pygame
 from enemies.enemy_types import *
 import settings
@@ -77,6 +76,7 @@ class Game:
                     elif e.dead:  # killed
                         self.enemies.remove(e)
                 if self.lives == 0:
+                    print("Lost")
                     self.active = False
                     break
                 # Check attack_towers:
@@ -101,6 +101,8 @@ class Game:
                 self.wave_num += 1
                 self.current_wave = waves[self.wave_num - 1]
                 self.pause = True
+                self.moving_object = None
+                self.selected_tower = None
                 self.play_pause_btn.change_img()
         else:
             wave_enemies = [Scorpion(), Wizard(), Clubber()]

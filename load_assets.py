@@ -1,5 +1,7 @@
 import pygame
 import settings
+from PIL import Image
+import numpy as np
 
 """For Towers:"""
 # load long tower imgs
@@ -39,18 +41,18 @@ sptower_imgs = [pygame.transform.scale(pygame.image.load(
 """For Enemies:"""
 # Load wizard imgs.
 wiz_images = []
-w_width = 30
-w_height = 30
+enemy_width = 40
+enemy_height = 40
 for c in range(20):
     if c < 10:
         wiz_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\2\2_enemies_1_run_00" + str(c) + ".png"),
-            (w_width, w_height))
+            (enemy_width, enemy_height))
         )
     else:
         wiz_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\2\2_enemies_1_run_0" + str(c) + ".png"),
-            (w_width, w_height)))
+            (enemy_width, enemy_height)))
 
 # load scorp imgs
 sc_images = []
@@ -58,12 +60,12 @@ for c in range(20):
     if c < 10:
         sc_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\1\1_enemies_1_run_00" + str(c) + ".png"),
-            (w_width, w_height))
+            (enemy_width, enemy_height))
         )
     else:
         sc_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\1\1_enemies_1_run_0" + str(c) + ".png"),
-            (w_width, w_height))
+            (enemy_width, enemy_height))
         )
 
 # load clubber imgs

@@ -5,10 +5,7 @@ from PIL import Image
 from pygame.sprite import Sprite
 
 
-# TODO:
-#   1) load images
-#   2) action when out of map
-#
+# TODO: Have some powerup spawn on map and
 
 class Enemy:
     """
@@ -18,8 +15,8 @@ class Enemy:
     def __init__(self):
         # set attributes
         self.worth = 50
-        self.width = 30
-        self.height = 30
+        self.width = 40
+        self.height = 40
         self.speed = 2
         self.max_health = 3
         self.health = self.max_health

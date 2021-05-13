@@ -55,7 +55,7 @@ def reconstruct_path(current):
     """
     path = []
     while current.parent is not None:
-        path.append((current.row, current.col))
+        path.append((current.col,current.row))
         current = current.parent
     path.reverse()
     return path
@@ -100,6 +100,18 @@ im = im.resize((1000, 600))
 img_grid = np.array(im)  # True: valid path. False: Obstacle.
 MAX_ROW = img_grid.shape[0]
 MAX_COL = img_grid.shape[1]
+resized_grid = np.zeros((MAX_ROW,MAX_ROW))
+for row in range(0, MAX_ROW//40):
+    for col in range(0, MAX_COL//40):
+        valid = True
+        for r in range(40):
+            for c in range(40):
+                if not img_grid[(row*40 + r), (col*40 + c)]:
+                    valid = False
+                    break
+            if not valid: break
+            print("")
+        resized_grid[row, col] = valid
 if __name__ == '__main__':
     # Create a Node grid from img grid.
 
