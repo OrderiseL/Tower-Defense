@@ -1,12 +1,9 @@
 import pygame
 import math
-import numpy as np
-from PIL import Image
-from pygame.sprite import Sprite
 
 
 # TODO: Have some powerup spawn on map and
-
+#    Check movement
 class Enemy:
     """
     Abstract class for all enemies.
@@ -25,6 +22,7 @@ class Enemy:
                      (814, 230), (857, 262), (871, 301), (874, 348), (861, 396), (813, 418), (730, 423), (661, 423),
                      (611, 443), (567, 469), (507, 481), (405, 482), (257, 486), (154, 476), (112, 460), (86, 420),
                      (72, 358), (53, 319), (19, 290), (-self.width, 290)]
+
         # Movement and animation
         self.new_slope = False
         self.flipped = False

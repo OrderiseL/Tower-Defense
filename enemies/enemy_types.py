@@ -1,4 +1,3 @@
-import pygame
 from enemies.enemy import Enemy
 from load_assets import *
 

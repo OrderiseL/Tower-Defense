@@ -120,7 +120,7 @@ class RangeTower(Tower):
         super().__init__(x, y)
         self.type = "support"
 
-        self.effect = [0.2, 0.4]
+        self.effect = [0.2, 0.4,0.6]
         self.tower_imgs = rtower_imgs
 
     def support(self, towers):

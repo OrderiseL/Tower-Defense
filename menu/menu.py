@@ -21,16 +21,14 @@ class Button:
 
     def clicked(self, x, y):
         """
-        Returns if tower has been clicked and selects tower.
+        Returns if button has been clicked and selects tower.
         :param x:
         :param y:
         :return: bool
         """
         if (self.width + self.x) >= x >= self.x \
                 and (self.height + self.y) >= y >= self.y:
-            self.selected = True
             return True
-        self.selected = False
         return False
 
     def draw(self, screen):
@@ -127,6 +125,7 @@ class Menu:
 class VerticalButton(Button):
     def __init__(self, menu, img, name):
         super().__init__(menu, img, name)
+        self.x += 7
         self.y += self.menu.item_count * 10 + 1.5 * self.height * self.menu.item_count + 10
 
 

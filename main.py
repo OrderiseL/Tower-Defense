@@ -46,7 +46,7 @@ class Game:
         self.moving_object = None
         # Player resources
         self.lives = 10
-        self.money = 600
+        self.money = 60000
         # Gameplay values:
         self.pause = True
         self.wave_num = 1
