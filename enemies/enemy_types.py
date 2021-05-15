@@ -1,5 +1,5 @@
 from enemies.enemy import Enemy
-from load_assets import *
+from loader import *
 
 
 class Wizard(Enemy):

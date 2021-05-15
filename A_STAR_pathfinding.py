@@ -1,13 +1,13 @@
+import cv2
 from PIL import Image
 import numpy as np
+import matplotlib.pyplot as plt
 import math
 from queue import PriorityQueue
 
 
-# TODO: preprocess map to fit enemys' width and height.
-
 class Node:
-    """Class to represent a node on the grid"""
+    """Class to represent a node on the node_grid"""
 
     def __init__(self):
         self.row = 0
@@ -17,28 +17,28 @@ class Node:
         self.parent = None
         self.neighbors = []
 
-    def update_neighbors(self, grid):
+    def update_neighbors(self, node_grid):
 
         self.neighbors = []
-        if self.row < MAX_ROW - 1 and not grid[self.row + 1][self.col].is_blocked:  # DOWN
-            self.neighbors.append(grid[self.row + 1][self.col])
-            if self.col < MAX_COL - 1 and not grid[self.row + 1][self.col + 1].is_blocked:  # RIGHT
-                self.neighbors.append(grid[self.row + 1][self.col + 1])
-            if self.col > 0 and not grid[self.row + 1][self.col - 1].is_blocked:  # LEFT
-                self.neighbors.append(grid[self.row + 1][self.col - 1])
+        if self.row < MAX_ROW - 1 and not node_grid[self.row + 1][self.col].is_blocked:  # DOWN
+            self.neighbors.append(node_grid[self.row + 1][self.col])
+            if self.col < MAX_COL - 1 and not node_grid[self.row + 1][self.col + 1].is_blocked:  # RIGHT
+                self.neighbors.append(node_grid[self.row + 1][self.col + 1])
+            if self.col > 0 and not node_grid[self.row + 1][self.col - 1].is_blocked:  # LEFT
+                self.neighbors.append(node_grid[self.row + 1][self.col - 1])
 
-        if self.row > 0 and not grid[self.row - 1][self.col].is_blocked:  # UP
-            self.neighbors.append(grid[self.row - 1][self.col])
-            if self.col < MAX_COL - 1 and not grid[self.row - 1][self.col + 1].is_blocked:  # RIGHT
-                self.neighbors.append(grid[self.row - 1][self.col + 1])
-            if self.col > 0 and not grid[self.row - 1][self.col - 1].is_blocked:  # LEFT
-                self.neighbors.append(grid[self.row - 1][self.col - 1])
+        if self.row > 0 and not node_grid[self.row - 1][self.col].is_blocked:  # UP
+            self.neighbors.append(node_grid[self.row - 1][self.col])
+            if self.col < MAX_COL - 1 and not node_grid[self.row - 1][self.col + 1].is_blocked:  # RIGHT
+                self.neighbors.append(node_grid[self.row - 1][self.col + 1])
+            if self.col > 0 and not node_grid[self.row - 1][self.col - 1].is_blocked:  # LEFT
+                self.neighbors.append(node_grid[self.row - 1][self.col - 1])
 
-        if self.col < MAX_COL - 1 and not grid[self.row][self.col + 1].is_blocked:  # RIGHT
-            self.neighbors.append(grid[self.row][self.col + 1])
+        if self.col < MAX_COL - 1 and not node_grid[self.row][self.col + 1].is_blocked:  # RIGHT
+            self.neighbors.append(node_grid[self.row][self.col + 1])
 
-        if self.col > 0 and not grid[self.row][self.col - 1].is_blocked:  # LEFT
-            self.neighbors.append(grid[self.row][self.col - 1])
+        if self.col > 0 and not node_grid[self.row][self.col - 1].is_blocked:  # LEFT
+            self.neighbors.append(node_grid[self.row][self.col - 1])
 
     def __lt__(self, other):
         return other
@@ -57,22 +57,23 @@ def reconstruct_path(current):
     while current.parent is not None:
         path.append((current.col, current.row))
         current = current.parent
+    path.append((current.col, current.row))
     path.reverse()
     return path
 
 
-def a_star_search(src, dest, grid):
+def a_star_search(src, dest, node_grid):
     """
     :param src: type (row,col) tuple
-    :param grid: Node
+    :param node_grid: Node
     """
     open_set = PriorityQueue()
     came_from = {}  # keep track of nodes in path
     open_set_hash = {}  # Track items in openset
     # Reset start node
-    grid[src[0]][src[1]].g = 0
-    f = grid[src[0]][src[1]].g + heuristic(src, dest)
-    open_set.put((f, grid[src[0]][src[1]]))  # (f,Node)
+    node_grid[src[0]][src[1]].g = 0
+    f = node_grid[src[0]][src[1]].g + heuristic(src, dest)
+    open_set.put((f, node_grid[src[0]][src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
         current = open_set.get()[1]
@@ -93,30 +94,51 @@ def a_star_search(src, dest, grid):
     return False
 
 
-# Load image of map
-im = Image.open(r'used_assets\cleaned background.bmp')
-im = im.resize((1000, 600))
-# Create grid from image.
-img_grid = np.array(im)  # True: valid path. False: Obstacle.
-MAX_ROW = img_grid.shape[0]
-MAX_COL = img_grid.shape[1]
-length = 40
-if __name__ == '__main__':
-    # Create a Node grid from img grid.
+def process_image(path, length):
+    """
+    returns numpy array from resized image
+    :param path:
+    :param length:
+    :return: ndarray
+    """
+    img = Image.open(path)
+    width, height = img.size
+    img = img.resize((width // length, height // length), Image.BICUBIC)
+    return np.array(img)
 
-    grid = [[]]
+
+img = process_image("used_assets\cleaned background.bmp", 10)
+plt.imshow(img, cmap="gray")  # Show img
+MAX_ROW = img.shape[0]
+MAX_COL = img.shape[1]
+
+
+def get_pos(pos, division):
+    x = pos[0] * division
+    y = pos[1] * division
+    return x, y
+
+
+def create_node_grid(img):
+    # Create a Node node_grid from img node_grid.
+    node_grid = [[]]
     for i in range(MAX_ROW):
         for j in range(MAX_COL):
             new_node = Node()
             new_node.row = i
             new_node.col = j
             # when cell is False it means pixel is an obstacle.
-            if not img_grid[i, j]:
+            if not img[i, j]:
                 new_node.is_blocked = True
-            grid[i].append(new_node)
-        grid.append([])
+            node_grid[i].append(new_node)
+        node_grid.append([])
     for i in range(MAX_ROW):
         for j in range(MAX_COL):
-            grid[i][j].update_neighbors(grid)
+            node_grid[i][j].update_neighbors(node_grid)
+    return node_grid
 
-    print(a_star_search((192-length//2, 1), (290-length//2, 0), grid))
+
+if __name__ == '__main__':
+    # Create a Node node_grid from img node_grid.
+    node_grid = create_node_grid(img)
+    print(a_star_search((30, 0), (50, 0), node_grid))

@@ -1,8 +1,11 @@
 import pygame
 import settings
-from PIL import Image
-import numpy as np
+import A_STAR_pathfinding as asp
 
+"""For map grid"""
+grid_divider = 10
+map_grid = asp.process_image("used_assets\cleaned background.bmp", grid_divider)
+node_grid = asp.create_node_grid(map_grid)
 """For Towers:"""
 # load long tower imgs
 ltower_imgs = [pygame.transform.scale(pygame.image.load(

@@ -2,7 +2,7 @@ import pygame
 import math
 import settings
 from menu.menu import Menu
-import load_assets
+import loader
 
 
 class Tower:
@@ -26,7 +26,7 @@ class Tower:
         self.moving = False
         # Define menu
         self.menu = Menu(self.x - 100, self.y, self)
-        self.menu.add_item(load_assets.upgrade_img, "upgrade")
+        self.menu.add_item(loader.upgrade_img, "upgrade")
 
     def draw(self, screen):
         """

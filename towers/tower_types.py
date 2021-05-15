@@ -1,7 +1,7 @@
 import pygame
 from towers.tower import Tower
 import math
-from load_assets import *
+from loader import *
 
 
 # TODO: Attack first enemy.
