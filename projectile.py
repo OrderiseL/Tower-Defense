@@ -49,7 +49,7 @@ class Arrow(pygame.sprite.Sprite):
 
     def update(self):
         self._update_move_values()
-        self.image = pygame.transform.rotate(self.original_image, self.angle)
+        self.image = pygame.transform.rotate(self.original_image, -self.angle)
         x, y = self.rect.center  # Save its current center.
         x += self.add_x
         y += self.add_y

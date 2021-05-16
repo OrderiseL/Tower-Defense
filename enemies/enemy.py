@@ -3,8 +3,8 @@ import math
 import settings
 
 
-# TODO: Have some powerup spawn on map and
-#    Check movement
+# TODO: Have some powerup spawn on map
+
 class Enemy:
     """
     Abstract class for all enemies.

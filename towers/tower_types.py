@@ -5,7 +5,7 @@ from projectile import Arrow
 
 # TODO: Attack first enemy.
 
-# Attack towers:
+
 class LongArcher(Tower):
     def __init__(self, x, y):
         super().__init__(x, y)
