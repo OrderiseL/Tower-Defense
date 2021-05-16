@@ -1,6 +1,4 @@
-import pygame
 from towers.tower import Tower
-import math
 from loader import *
 
 

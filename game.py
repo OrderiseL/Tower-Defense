@@ -5,6 +5,7 @@ from towers.tower_types import *
 import random
 import time
 from menu.menu import VerticalMenu, PlayPauseButton
+import loader
 
 pygame.init()
 pygame.font.init()
@@ -18,18 +19,19 @@ waves = [
     [50, 0, 0],
     [100, 0, 0],
     [0, 20, 0],
-    [0, 50, 0, 1],
+    [0, 50, 0],
     [0, 100, 0],
     [20, 100, 0],
     [50, 100, 0],
     [100, 100, 0],
-    [0, 0, 50, 3],
+    [0, 0, 50],
     [20, 0, 100],
     [20, 0, 150],
     [200, 100, 200],
 ]
-
-
+# for music
+pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
+# TODO: MAKE HOMING PROJECTILE
 class Game:
 
     def __init__(self):
@@ -51,16 +53,22 @@ class Game:
         self.pause = True
         self.wave_num = 1
         self.current_wave = waves[self.wave_num - 1][:]
+        # Buttons:
         self.play_pause_btn = PlayPauseButton(10, settings.win_height - 120)
+        self.music_btn = PlayPauseButton(self.play_pause_btn.width+30, settings.win_height - 120)
+        self.music_btn.play_img = loader.music_img
+        self.music_btn.img = loader.music_img
+        self.music_btn.pause_img = loader.musicoff_img
 
     def run(self):
         """Function to run game"""
         self._update_screen()
         clock = pygame.time.Clock()
-
+        pygame.mixer.music.play(1)
         while self.active:
             clock.tick(60)  # Limit framerate
             self._check_events()
+
             if not self.pause:
                 # spawn new enemies:
                 if time.time() - self.timer >= random.randrange(1, 6) / 3:
@@ -126,6 +134,15 @@ class Game:
         :return: None
         """
         pos = pygame.mouse.get_pos()
+        # click on music button:
+        if self.music_btn.clicked(pos[0], pos[1]):
+            self.music_btn.change_img()
+            if self.music_btn.img==self.music_btn.pause_img:
+                pygame.mixer.music.pause()
+            else:
+                pygame.mixer.music.unpause()
+            self.music_btn.draw(self.screen)
+            pygame.display.update()
         # Click on play btn:
         if self.play_pause_btn.clicked(pos[0], pos[1]):
             self.pause = not self.pause
@@ -183,10 +200,14 @@ class Game:
                 self.moving_object.moving = True
 
     def _place_object(self, pos):
+        # check Tower not on path
         for tower in (self.support_towers + self.attack_towers):
-            if self.moving_object.has_collided(tower):
+            if self.moving_object.has_collided(tower) or \
+                    loader.map_grid[pos[1], pos[0]] or \
+                    loader.map_grid[pos[1] + settings.tower_height // 2, pos[0]]:
                 self.moving_object = None
                 return False
+        # Place it.
         self.moving_object.moving = False
         if self.moving_object.type == "attack":
             self.attack_towers.append(self.moving_object)
@@ -208,6 +229,7 @@ class Game:
     def _draw_possesions(self):
         # Draw play btn
         self.play_pause_btn.draw(self.screen)
+        self.music_btn.draw(self.screen)
         # Draw lives
         txt = font.render(str(self.lives), 1, (255, 255, 255))
         self.screen.blit(heart, (self.screen.get_width() - heart.get_width() - 10, 10))

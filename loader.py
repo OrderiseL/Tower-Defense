@@ -3,9 +3,8 @@ import settings
 import A_STAR_pathfinding as asp
 
 """For map grid"""
-grid_divider = 10
-map_grid = asp.process_image("used_assets\cleaned background.bmp", grid_divider)
-node_grid = asp.create_node_grid(map_grid)
+map_grid = asp.map_grid
+# node_grid = asp.create_node_grid(map_grid)
 """For Towers:"""
 # load long tower imgs
 ltower_imgs = [pygame.transform.scale(pygame.image.load(
@@ -86,23 +85,19 @@ for c in range(20):
         )
 
 """Menu:"""
-menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu.png"), (100, 60))
-upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\upgrade.png"), (50, 50))
-pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_pause.png"), (110, 110))
-start_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_start.png"), (110, 110))
-star = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (40, 40))
-vert_menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu\window_3.png"), (120, 600))
-wave_img = pygame.transform.scale(pygame.image.load(r"used_assets\wave.png"), (250, 100))
+menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets/menu.png"), (100, 60))
+upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/upgrade.png"), (50, 50))
+pause_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_pause.png"), (110, 110))
+start_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_start.png"), (110, 110))
+star = pygame.transform.scale(pygame.image.load(r"used_assets/star.png"), (40, 40))
+vert_menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets/menu/window_3.png"), (120, 600))
+wave_img = pygame.transform.scale(pygame.image.load(r"used_assets/wave.png"), (250, 100))
 # Buy stuff:
-buy_long = pygame.transform.scale(pygame.image.load(r"used_assets\buy_long.png"), (90, 90))
-buy_range = pygame.transform.scale(pygame.image.load(r"used_assets\buy_range.png"), (90, 90))
-buy_short = pygame.transform.scale(pygame.image.load(r"used_assets\buy_short.png"), (90, 90))
-buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets\buy_speed.png"), (90, 90))
+buy_long = pygame.transform.scale(pygame.image.load(r"used_assets/buy_long.png"), (90, 90))
+buy_range = pygame.transform.scale(pygame.image.load(r"used_assets/buy_range.png"), (90, 90))
+buy_short = pygame.transform.scale(pygame.image.load(r"used_assets/buy_short.png"), (90, 90))
+buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets/buy_speed.png"), (90, 90))
 # Main menu
-play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (90, 90))
-
-
-
-
-
-
+play_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_play.png"), (90, 90))
+music_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_sound.png"), (110, 110))
+musicoff_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_sound_off.png"), (110, 110))

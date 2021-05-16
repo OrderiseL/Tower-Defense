@@ -1,4 +1,3 @@
-import cv2
 from PIL import Image
 import numpy as np
 import matplotlib.pyplot as plt
@@ -65,7 +64,7 @@ def reconstruct_path(current):
 def a_star_search(src, dest, node_grid):
     """
     :param src: type (row,col) tuple
-    :param node_grid: Node
+    :param node_grid: Node matrice [row][col]
     """
     open_set = PriorityQueue()
     came_from = {}  # keep track of nodes in path
@@ -94,23 +93,23 @@ def a_star_search(src, dest, node_grid):
     return False
 
 
-def process_image(path, length):
+def process_to_grid(path):
     """
     returns numpy array from resized image
     :param path:
     :param length:
     :return: ndarray
     """
+    # Open and fit to map
     img = Image.open(path)
-    width, height = img.size
-    img = img.resize((width // length, height // length), Image.BICUBIC)
+    img = img.convert('L')
     return np.array(img)
 
 
-img = process_image("used_assets\cleaned background.bmp", 10)
-plt.imshow(img, cmap="gray")  # Show img
-MAX_ROW = img.shape[0]
-MAX_COL = img.shape[1]
+map_grid = process_to_grid("used_assets/cleaned.png")
+plt.imshow(map_grid, cmap="gray")  # Show map_grid
+MAX_ROW = map_grid.shape[0]
+MAX_COL = map_grid.shape[1]
 
 
 def get_pos(pos, division):
@@ -136,8 +135,9 @@ def get_reverse_pos(pos, division):
     c = round(pos[0] / division)
     return r, c
 
-def create_node_grid(img):
-    # Create a Node node_grid from img node_grid.
+
+def create_node_grid(map_grid):
+    # Create a Node node_grid from map_grid node_grid.
     node_grid = [[]]
     for i in range(MAX_ROW):
         for j in range(MAX_COL):
@@ -145,7 +145,7 @@ def create_node_grid(img):
             new_node.row = i
             new_node.col = j
             # when cell is False it means pixel is an obstacle.
-            if not img[i, j]:
+            if not map_grid[i, j]:
                 new_node.is_blocked = True
             node_grid[i].append(new_node)
         node_grid.append([])
@@ -156,6 +156,6 @@ def create_node_grid(img):
 
 
 if __name__ == '__main__':
-    # Create a Node node_grid from img node_grid.
-    node_grid = create_node_grid(img)
-    print(a_star_search((30, 0), (50, 0), node_grid))
+    # Create a node_grid from map_grid .
+    node_grid = create_node_grid(map_grid)
+    print(a_star_search((270, 0), (430, 0), node_grid))

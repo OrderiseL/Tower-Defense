@@ -122,6 +122,11 @@ class Tower:
         screen.blit(img, (self.x - self.width // 2, self.y - self.height // 2))
 
     def has_collided(self, other):
+        """
+        returns true if tower is on another.
+        :param other: Tower
+        :return: bool
+        """
         x2 = other.x
         y2 = other.y
 
