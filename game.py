@@ -31,7 +31,7 @@ waves = [
 ]
 # for music
 pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
-
+pygame.mixer.music.set_volume(0.02)
 
 # TODO: MAKE HOMING PROJECTILE
 class Game:

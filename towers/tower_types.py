@@ -1,5 +1,6 @@
 from towers.tower import Tower
 from loader import *
+from projectile import Arrow
 
 
 # TODO: Attack first enemy.
@@ -46,6 +47,9 @@ class LongArcher(Tower):
             archer = pygame.transform.flip(archer, self.left, False)
             # draw archer at middle of tower.
             screen.blit(archer, (self.x - 25, self.y - 70))
+            # Draw arrows
+            self.arrows.update()
+            self.arrows.draw(screen)
 
     def attack(self, enemies):
         """
@@ -67,12 +71,15 @@ class LongArcher(Tower):
             self._update_direction(first.x, first.y)
             # Attack when archer finished motion.
             if self.end:
-                worth = first.hit(self.damage)
-                if worth:
-                    closest_enemy.remove(first)
-                    return worth
+                arrow = Arrow(first, (self.x, self.y - 70))
+                self.arrows.add(arrow)
         else:
             self.in_range = False
+
+        for arrow in self.arrows:
+            worth = arrow.hit_target(self.damage)
+            if worth > 0 or worth == -1:
+                self.arrows.remove(arrow)
         return worth
 
     def _update_direction(self, x, y):
@@ -118,7 +125,7 @@ class RangeTower(Tower):
         super().__init__(x, y)
         self.type = "support"
 
-        self.effect = [0.2, 0.4,0.6]
+        self.effect = [0.2, 0.4, 0.6]
         self.tower_imgs = rtower_imgs
 
     def support(self, towers):
