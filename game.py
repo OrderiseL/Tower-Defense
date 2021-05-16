@@ -31,6 +31,8 @@ waves = [
 ]
 # for music
 pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
+
+
 # TODO: MAKE HOMING PROJECTILE
 class Game:
 
@@ -55,7 +57,7 @@ class Game:
         self.current_wave = waves[self.wave_num - 1][:]
         # Buttons:
         self.play_pause_btn = PlayPauseButton(10, settings.win_height - 120)
-        self.music_btn = PlayPauseButton(self.play_pause_btn.width+30, settings.win_height - 120)
+        self.music_btn = PlayPauseButton(self.play_pause_btn.width + 30, settings.win_height - 120)
         self.music_btn.play_img = loader.music_img
         self.music_btn.img = loader.music_img
         self.music_btn.pause_img = loader.musicoff_img
@@ -94,6 +96,7 @@ class Game:
                 # Support towers:
                 for tower in self.support_towers:
                     tower.support(self.attack_towers)
+                    tower.support(self.support_towers)
                 if self.moving_object:
                     pos = pygame.mouse.get_pos()
                     self.moving_object.move(pos[0], pos[1])
@@ -137,7 +140,7 @@ class Game:
         # click on music button:
         if self.music_btn.clicked(pos[0], pos[1]):
             self.music_btn.change_img()
-            if self.music_btn.img==self.music_btn.pause_img:
+            if self.music_btn.img == self.music_btn.pause_img:
                 pygame.mixer.music.pause()
             else:
                 pygame.mixer.music.unpause()

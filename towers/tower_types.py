@@ -17,6 +17,7 @@ class LongArcher(Tower):
         self.archer_imgs = larcher_imgs[:]
         self.type = "attack"
         # For attacking.
+        self.arrows = pygame.sprite.Group()
         self.damage = 1
         self.attack_speed = 0.15
         self.curr_speed = self.attack_speed
@@ -162,6 +163,8 @@ class SpeedTower(Tower):
                 self.in_range = True
                 affected.append(tower)
         for tower in affected:
+            if tower.type == "support":
+                return
             tower.curr_speed = tower.attack_speed + tower.attack_speed * self.effect[self.level - 1]
 
 

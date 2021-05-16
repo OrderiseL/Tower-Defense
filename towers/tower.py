@@ -18,7 +18,7 @@ class Tower:
         self.upgrade_cost = [2000, 5000, "MAX"]
         self.sell_cost = [2000, 5000, 12000]
         self.level = 1
-        self.range = 100
+        self.range = 150
         self.curr_range = self.range
         self.in_range = False
         # For interactions:

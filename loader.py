@@ -25,7 +25,7 @@ stower_imgs = [pygame.transform.scale(pygame.image.load(
 # load short archer imgs
 sarcher_imgs = [pygame.image.load(
     r"used_assets\Towers\archer_top2\{}.png".format(c))
-    for c in range(44, 51)]
+    for c in range(51, 57)]
 for i in range(len(sarcher_imgs)):
     img = sarcher_imgs[i]
     sarcher_imgs[i] = pygame.transform.scale(img, (settings.archer_width, settings.archer_height))
