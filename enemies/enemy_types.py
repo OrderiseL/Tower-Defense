@@ -19,6 +19,8 @@ class Scorpion(Enemy):
     def __init__(self):
         super().__init__()
         # Attributes:
+        self.width = settings.sc_width
+        self.height = settings.sc_height
         self.worth = 30
         self.max_health = 1
         self.health = self.max_health
@@ -31,10 +33,10 @@ class Clubber(Enemy):
     def __init__(self):
         super().__init__()
         # Attributes:
+        self.width = settings.cl_width
+        self.height = settings.cl_height
         self.worth = 80
         self.max_health = 5
         self.health = self.max_health
         # Load for animation:
-        self.width = 40
-        self.height = 40
         self.images = cl_images[:]

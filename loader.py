@@ -17,7 +17,7 @@ larcher_imgs = [pygame.image.load(
     for c in range(38, 43)]
 for i in range(len(larcher_imgs)):
     img = larcher_imgs[i]
-    larcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.7), int(img.get_height() * 0.7)))
+    larcher_imgs[i] = pygame.transform.scale(img, (settings.archer_width, settings.archer_height))
 
 # load short tower imgs
 stower_imgs = [pygame.transform.scale(pygame.image.load(
@@ -29,7 +29,7 @@ sarcher_imgs = [pygame.image.load(
     for c in range(44, 51)]
 for i in range(len(sarcher_imgs)):
     img = sarcher_imgs[i]
-    sarcher_imgs[i] = pygame.transform.scale(img, (int(img.get_width() * 0.7), int(img.get_height() * 0.7)))
+    sarcher_imgs[i] = pygame.transform.scale(img, (settings.archer_width, settings.archer_height))
 
 # load range tower imgs
 rtower_imgs = [pygame.transform.scale(pygame.image.load(
@@ -50,25 +50,25 @@ for c in range(20):
     if c < 10:
         wiz_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\2\2_enemies_1_run_00" + str(c) + ".png"),
-            (enemy_width, enemy_height))
+            (settings.wiz_width, settings.wiz_height))
         )
     else:
         wiz_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\2\2_enemies_1_run_0" + str(c) + ".png"),
-            (enemy_width, enemy_height)))
+            (settings.wiz_width, settings.wiz_height)))
 
-# load scorp imgs
+# load scorpion imgs
 sc_images = []
 for c in range(20):
     if c < 10:
         sc_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\1\1_enemies_1_run_00" + str(c) + ".png"),
-            (enemy_width, enemy_height))
+            (settings.sc_width, settings.sc_height))
         )
     else:
         sc_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\1\1_enemies_1_run_0" + str(c) + ".png"),
-            (enemy_width, enemy_height))
+            (settings.sc_width, settings.sc_height))
         )
 
 # load clubber imgs
@@ -77,27 +77,32 @@ for c in range(20):
     if c < 10:
         cl_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\5\5_enemies_1_run_00" + str(c) + ".png"),
-            (40, 40))
+            (settings.cl_width, settings.cl_height))
         )
     else:
         cl_images.append(pygame.transform.scale(
             pygame.image.load(r"used_assets\enemies\5\5_enemies_1_run_0" + str(c) + ".png"),
-            (40, 40))
+            (settings.cl_width, settings.cl_height))
         )
 
 """Menu:"""
 menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu.png"), (100, 60))
-upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\upgrade.png"), (40, 40))
-pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_pause.png"), (70, 70))
-play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (70, 70))
+upgrade_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\upgrade.png"), (50, 50))
+pause_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_pause.png"), (110, 110))
+start_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_start.png"), (110, 110))
 star = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (40, 40))
-star_2 = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (20, 20))
-vert_menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu\window_3.png"), (80, 400))
+vert_menu_bg = pygame.transform.scale(pygame.image.load(r"used_assets\menu\window_3.png"), (120, 600))
+wave_img = pygame.transform.scale(pygame.image.load(r"used_assets\wave.png"), (250, 100))
 # Buy stuff:
-buy_long = pygame.transform.scale(pygame.image.load(r"used_assets\buy_long.png"), (60, 55))
-buy_range = pygame.transform.scale(pygame.image.load(r"used_assets\buy_range.png"), (60, 55))
-buy_short = pygame.transform.scale(pygame.image.load(r"used_assets\buy_short.png"), (60, 55))
-buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets\buy_speed.png"), (60, 55))
+buy_long = pygame.transform.scale(pygame.image.load(r"used_assets\buy_long.png"), (90, 90))
+buy_range = pygame.transform.scale(pygame.image.load(r"used_assets\buy_range.png"), (90, 90))
+buy_short = pygame.transform.scale(pygame.image.load(r"used_assets\buy_short.png"), (90, 90))
+buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets\buy_speed.png"), (90, 90))
+# Main menu
+play_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_play.png"), (90, 90))
 
-start_img = pygame.transform.scale(pygame.image.load(r"used_assets\menu\button_start.png"), (70, 70))
-wave_img = pygame.transform.scale(pygame.image.load(r"used_assets\wave.png"), (200, 60))
+
+
+
+
+

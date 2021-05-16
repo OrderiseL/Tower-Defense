@@ -18,7 +18,6 @@ class LongArcher(Tower):
         # load archer imgs
         self.archer_imgs = larcher_imgs[:]
         self.type = "attack"
-
         # For attacking.
         self.damage = 1
         self.attack_speed = 0.15
@@ -47,7 +46,7 @@ class LongArcher(Tower):
             archer = self.archer_imgs[int(self.archer_frame)]
             archer = pygame.transform.flip(archer, self.left, False)
             # draw archer at middle of tower.
-            screen.blit(archer, (self.x - 20, self.y - archer.get_height() - 20))
+            screen.blit(archer, (self.x - 25, self.y - 70))
 
     def attack(self, enemies):
         """

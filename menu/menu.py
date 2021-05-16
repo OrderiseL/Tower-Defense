@@ -61,7 +61,7 @@ class Menu:
 
     def __init__(self, x, y, tower):
         # For visuals:
-        self.font = pygame.font.SysFont("comicsans", 22)
+        self.font = pygame.font.SysFont("comicsans", 26)
         self.bg = loader.menu_bg
         # Attributes:
         self.tower = tower
@@ -134,21 +134,22 @@ class VerticalMenu(Menu):
 
     def __init__(self, x, y):
         super().__init__(x, y, None)
+        self.font = pygame.font.SysFont("comicsans", 38)
         self.bg = loader.vert_menu_bg
         self.width = self.bg.get_width()
         self.height = self.bg.get_height()
         self.items_costs = {"range": 800, "speed": 800, "long": 500, "short": 500}
-        self.x -= self.width
+        self.x -= self.width+10
         self._create_buttons()
 
     def draw(self, screen):
         screen.blit(self.bg, (self.x, self.y - 10))
         for item in self.buttons:
             item.draw(screen)
-            st = pygame.transform.scale(loader.star, (30, 30))
-            screen.blit(st, (item.x + 5, item.y + item.height + 2))
+            st = pygame.transform.scale(loader.star, (55, 55))
+            screen.blit(st, (item.x, item.y + item.height))
             txt = self.font.render(str(self.items_costs[item.name]), 1, (240, 255, 255))
-            screen.blit(txt, (item.x + 5 + st.get_width(), item.y + item.height + 10))
+            screen.blit(txt, (item.x + 5 + st.get_width(), item.y + item.height + 20))
 
     def _create_buttons(self):
         self.buttons.append(VerticalButton(self, loader.buy_long, "long"))

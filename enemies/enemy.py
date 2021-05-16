@@ -1,5 +1,6 @@
 import pygame
 import math
+import settings
 
 
 # TODO: Have some powerup spawn on map and
@@ -12,8 +13,8 @@ class Enemy:
     def __init__(self):
         # set attributes
         self.worth = 50
-        self.width = 40
-        self.height = 40
+        self.width = settings.wiz_width
+        self.height = settings.wiz_height
         self.speed = 2
         self.max_health = 3
         self.health = self.max_health

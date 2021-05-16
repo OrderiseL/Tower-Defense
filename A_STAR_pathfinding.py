@@ -114,10 +114,27 @@ MAX_COL = img.shape[1]
 
 
 def get_pos(pos, division):
+    """
+    returns x,y values scaled to map.
+    :param pos:
+    :param division:
+    :return: tuple(x,y)
+    """
     x = pos[0] * division
     y = pos[1] * division
     return x, y
 
+
+def get_reverse_pos(pos, division):
+    """
+    returns row,col values to access grid.
+    :param pos:
+    :param division:
+    :return: tuple(r,c)
+    """
+    r = round(pos[1] / division)
+    c = round(pos[0] / division)
+    return r, c
 
 def create_node_grid(img):
     # Create a Node node_grid from img node_grid.

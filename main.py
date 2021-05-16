@@ -9,9 +9,9 @@ from menu.menu import VerticalMenu, PlayPauseButton
 pygame.init()
 pygame.font.init()
 
-heart = pygame.transform.scale(pygame.image.load("used_assets\heart.png"), (36, 36))
-star_img = pygame.image.load("used_assets\star.png")
-font = pygame.font.SysFont("comicsans", 55)
+heart = pygame.transform.scale(pygame.image.load("used_assets\heart.png"), (60, 60))  # For health
+star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (60, 60))  # For money
+font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
     [20, 0, 0],
@@ -36,13 +36,13 @@ class Game:
         self.active = True
         self.timer = time.time()
         # initalize main window settings
-        self.screen = pygame.display.set_mode((settings.scr_width, settings.scr_height))
+        self.screen = pygame.display.set_mode((settings.win_width, settings.win_height))
         # Objects
         self.enemies = []
-        self.attack_towers = [ShortArcher(800, 300)]
-        self.support_towers = [SpeedTower(300, 400)]
+        self.attack_towers = []
+        self.support_towers = []
         self.selected_tower = None
-        self.buy_menu = VerticalMenu(settings.scr_width, 100)
+        self.buy_menu = VerticalMenu(settings.win_width, 170)
         self.moving_object = None
         # Player resources
         self.lives = 10
@@ -51,7 +51,7 @@ class Game:
         self.pause = True
         self.wave_num = 1
         self.current_wave = waves[self.wave_num - 1][:]
-        self.play_pause_btn = PlayPauseButton(10, settings.scr_height - 80)
+        self.play_pause_btn = PlayPauseButton(10, settings.win_height - 120)
 
     def run(self):
         """Function to run game"""
@@ -220,7 +220,7 @@ class Game:
         # Draw wave
         txt = font.render("Wave #" + str(self.wave_num), 1, (255, 255, 255))
         self.screen.blit(wave_img, (10, 10))
-        self.screen.blit(txt, (40, 25))
+        self.screen.blit(txt, (40, 40))
 
     def _draw_objects(self):
         # Draw objects
