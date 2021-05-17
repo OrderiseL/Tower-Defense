@@ -41,6 +41,8 @@ sptower_imgs = [pygame.transform.scale(pygame.image.load(
     for c in range(7, 10)]
 
 """For Enemies:"""
+# powerup:
+powerup_img = pygame.transform.scale(pygame.image.load(r"used_assets\enemies\crystal_2.png"), (20, 20))
 # Load wizard imgs.
 wiz_images = []
 enemy_width = 40

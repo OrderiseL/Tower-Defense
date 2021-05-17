@@ -6,6 +6,7 @@ import random
 import time
 from menu.menu import VerticalMenu, PlayPauseButton
 import loader
+from enemies.powerboost import Powerup
 
 pygame.init()
 pygame.font.init()
@@ -34,6 +35,8 @@ pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
 pygame.mixer.music.set_volume(0.02)
 
 
+# Todo: Actions during paused game.
+
 class Game:
 
     def __init__(self):
@@ -41,12 +44,14 @@ class Game:
         self.timer = time.time()
         # initalize main window settings
         self.screen = pygame.display.set_mode((settings.win_width, settings.win_height))
-        # Objects
+        # Enemies:
+        self.powerups = pygame.sprite.Group()
+        self.powerups.add()
         self.enemies = []
+        # For towers:
         self.attack_towers = []
         self.support_towers = []
         self.selected_tower = None
-        self.buy_menu = VerticalMenu(settings.win_width, 170)
         self.moving_object = None
         # Player resources
         self.lives = 10
@@ -56,6 +61,7 @@ class Game:
         self.wave_num = 1
         self.current_wave = waves[self.wave_num - 1][:]
         # Buttons:
+        self.buy_menu = VerticalMenu(settings.win_width, 170)
         self.play_pause_btn = PlayPauseButton(10, settings.win_height - 120)
         self.music_btn = PlayPauseButton(self.play_pause_btn.width + 30, settings.win_height - 120)
         self.music_btn.play_img = loader.music_img
@@ -246,6 +252,7 @@ class Game:
         pygame.display.update()
 
     def _draw_possesions(self):
+        self.powerups.draw(self.screen)
         # Draw play btn
         self.play_pause_btn.draw(self.screen)
         self.music_btn.draw(self.screen)

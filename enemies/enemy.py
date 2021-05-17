@@ -150,3 +150,4 @@ class Enemy:
             self.dead = True
             return self.worth
         return 0
+
