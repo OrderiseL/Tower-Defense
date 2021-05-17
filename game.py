@@ -34,8 +34,6 @@ pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
 pygame.mixer.music.set_volume(0.02)
 
 
-# TODO: Fix tower placement(on menu, buttons...)
-
 class Game:
 
     def __init__(self):
@@ -205,13 +203,8 @@ class Game:
                 self.moving_object.moving = True
 
     def _place_object(self, pos):
-        # check Tower not on path
-        for tower in (self.support_towers + self.attack_towers):
-            if self.moving_object.has_collided(tower) or \
-                    loader.map_grid[pos[1], pos[0]] or \
-                    loader.map_grid[pos[1] + settings.tower_height // 2, pos[0]]:
-                self.moving_object = None
-                return False
+        if not self._is_valid_position(pos):
+            return False
         # Place it.
         self.moving_object.moving = False
         if self.moving_object.type == "attack":
@@ -220,6 +213,27 @@ class Game:
             self.support_towers.append(self.moving_object)
         self.money -= self.moving_object.cost
         self.moving_object = None
+
+    def _is_valid_position(self, pos):
+        """
+        Returns if not on menu,buttons,path..
+        :param pos:
+        :return: bool
+        """
+        # check Tower not on path or other tower
+        for tower in (self.support_towers + self.attack_towers):
+            if self.moving_object.has_collided(tower) or \
+                    loader.map_grid[pos[1], pos[0]] or \
+                    loader.map_grid[pos[1] + settings.tower_height // 2, pos[0]]:
+                self.moving_object = None
+                return False
+        # Check tower not on menu:
+        if self.buy_menu.is_clicked(pos[0], pos[1]):
+            return False
+        # Check buttons:
+        if self.play_pause_btn.clicked(pos[0], pos[1]) or self.music_btn.clicked(pos[0], pos[1]):
+            return False
+        return True
 
     def _update_screen(self):
         # Draw background
