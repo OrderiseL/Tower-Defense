@@ -78,7 +78,7 @@ class LongArcher(Tower):
 
         for arrow in self.arrows:
             worth = arrow.hit_target(self.damage)
-            if worth > 0 or worth == -1:
+            if worth != -2:
                 self.arrows.remove(arrow)
         return worth
 

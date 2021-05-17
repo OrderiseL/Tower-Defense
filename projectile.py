@@ -2,8 +2,6 @@ import pygame
 import math
 
 
-# TODO: Fix arrow homing
-
 class Arrow(pygame.sprite.Sprite):
 
     def __init__(self, target, pos=(500, 500)):
@@ -44,8 +42,8 @@ class Arrow(pygame.sprite.Sprite):
         if self.target.dead:
             return -1
         if self.target.collide(self.rect.center[0], self.rect.center[1]):
-            return self.target.hit(damage)
-        return 0
+            return self.target.hit(damage) # Returns 0+
+        return -2
 
     def update(self):
         self._update_move_values()

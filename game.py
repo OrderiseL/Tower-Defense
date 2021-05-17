@@ -15,7 +15,7 @@ star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (6
 font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
-    [20, 0, 0],
+    [10, 10, 10],
     [50, 0, 0],
     [100, 0, 0],
     [0, 20, 0],
@@ -33,7 +33,9 @@ waves = [
 pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
 pygame.mixer.music.set_volume(0.02)
 
-# TODO: MAKE HOMING PROJECTILE
+
+# TODO: Fix tower placement(on menu, buttons...)
+
 class Game:
 
     def __init__(self):
