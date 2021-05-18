@@ -19,7 +19,7 @@ class Enemy:
         self.speed = 3
         self.max_health = 3
         self.health = self.max_health
-        self.main_path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342),
+        self.curr_path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342),
                           (768, 281),
                           (784, 216), (813, 122), (859, 89), (945, 77), (1002, 103), (1028, 137), (1045, 189),
                           (1051, 237),
@@ -29,7 +29,6 @@ class Enemy:
                           (179, 699),
                           (138, 663), (119, 624), (111, 573), (99, 532), (80, 487),
                           (54, 461), (25, 435), (-self.width, 427)]
-        self.curr_path = self.main_path
         # Movement and animation
         self.new_slope = False
         self.flipped = False
@@ -40,12 +39,12 @@ class Enemy:
         self.out = False
         self.dead = False
         # to adjust y
-        for i in range(len(self.main_path)):
-            self.main_path[i] = list(self.main_path[i])
-            self.main_path[i][1] -= self.height // 2
+        for i in range(len(self.curr_path)):
+            self.curr_path[i] = list(self.curr_path[i])
+            self.curr_path[i][1] -= self.height // 2
         # Set position
-        self.x = self.main_path[0][0]
-        self.y = self.main_path[0][1]
+        self.x = self.curr_path[0][0]
+        self.y = self.curr_path[0][1]
         self.add_y = 0  # Amount to add and keep even speed
         self.add_x = 0
         self._update_move_values()
@@ -60,9 +59,6 @@ class Enemy:
         """
         if self.out:
             return
-        # Set enemy
-        if not self.targeting:
-            self.curr_path = self.main_path
         # Draw enemy
         self.img = self.images[int(self.animation_index)]
         self.img = pygame.transform.flip(self.img, self.flipped, False)
@@ -110,11 +106,11 @@ class Enemy:
         if self.add_y > 0:  # Down
             # exceeded end position
             if (self.y + self.add_y) > self.curr_path[self.path_pos + 1][1]:
-                self.y = self.main_path[self.path_pos + 1][1]  # set at end position
+                self.y = self.curr_path[self.path_pos + 1][1]  # set at end position
                 self.new_slope = True
         else:
             if (self.y + self.add_y) < self.curr_path[self.path_pos + 1][1]:
-                self.y = self.main_path[self.path_pos + 1][1]  # set at end position
+                self.y = self.curr_path[self.path_pos + 1][1]  # set at end position
                 self.new_slope = True
         if self.new_slope:  # Calculate next x,y values
             self.path_pos += 1
@@ -166,4 +162,5 @@ class Enemy:
         """
         powerup.is_targeted = True
         self.targeting = powerup
-
+        dest = tuple(powerup.rect.center[::-1])
+        path = asp.a_star_search((self.y, self.x), dest, 2)

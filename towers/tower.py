@@ -39,7 +39,7 @@ class Tower:
             return
             # draw range circle:
         if self.selected:
-            circle = pygame.Surface((self.curr_range * 4, self.curr_range * 4), pygame.SRCALPHA, 32)
+            circle = pygame.Surface((self.curr_range * 2, self.curr_range * 2), pygame.SRCALPHA, 32)
             pygame.draw.circle(circle, (128, 128, 128, 100), (self.curr_range, self.curr_range), self.curr_range, 0)
             screen.blit(circle, (self.x - self.curr_range, self.y - self.curr_range))
         # Draw tower:
@@ -51,10 +51,10 @@ class Tower:
 
     def draw_placement(self, screen):
         # draw range circle
-        surface = pygame.Surface((self.range * 4, self.range * 4), pygame.SRCALPHA, 32)
-        pygame.draw.circle(surface, (200, 0, 0,100), (50, 50), 50, 0)
+        surface = pygame.Surface((self.height * 2, self.height * 2), pygame.SRCALPHA, 32)
+        pygame.draw.circle(surface, (200, 0, 0,100), (self.height, self.height), self.height-30, 0)
 
-        screen.blit(surface, (self.x - 50, self.y - 50))
+        screen.blit(surface, (self.x - self.height, self.y - self.height))
 
     def click(self, x, y):
         """
@@ -131,7 +131,7 @@ class Tower:
         y2 = other.y
 
         dist = math.sqrt((x2 - self.x) ** 2 + (y2 - self.y) ** 2)
-        if dist >= self.height:
+        if dist >= self.height-30:
             return False
         else:
             return True

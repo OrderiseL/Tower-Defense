@@ -6,7 +6,7 @@ A power-up that will spawn every couple of seconds.
 Enemies that havent passed the power-up will move towards it.
 Challenges:
 1. Movement- without getting out of path.
-2. 
+if 
 """
 
 
@@ -21,6 +21,7 @@ class Powerup(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.center = pos
         # Special
+        self.is_targeted = False
         self.boost = 2  # multiply health, increase size.
 
     def power_up(self, enemy):
@@ -34,3 +35,4 @@ class Powerup(pygame.sprite.Sprite):
         for i in range(len(enemy.images)):
             new_img = pygame.transform.scale(enemy.images[i], (enemy.width, enemy.height))
             enemy.images[i] = new_img
+

@@ -66,6 +66,8 @@ def a_star_search(src, dest, node_grid):
     :param src: type (row,col) tuple
     :param node_grid: Node matrice [row][col]
     """
+    src = tuple(src)
+    dest = tuple(dest)
     open_set = PriorityQueue()
     came_from = {}  # keep track of nodes in path
     open_set_hash = {}  # Track items in openset
