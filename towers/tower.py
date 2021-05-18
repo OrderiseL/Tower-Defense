@@ -28,7 +28,7 @@ class Tower:
         self.menu = Menu(self.x - 100, self.y, self)
         self.menu.add_item(loader.upgrade_img, "upgrade")
 
-    def draw(self, screen):
+    def draw(self, screen,paused):
         """
         draws the tower according to state(moving/placed)
         :param screen: Surface
@@ -108,9 +108,9 @@ class Tower:
         :return: None
         """
         dis = math.dist((self.x, self.y), (x, y))
-        if dis < self.curr_range:
-            return True
-        return False
+        if dis <= self.curr_range:
+            return dis
+        return 0
 
     def _draw_moving(self, screen):
         # draw range circle:

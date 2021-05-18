@@ -32,7 +32,7 @@ class LongArcher(Tower):
         :param screen: Surface
         :return: None
         """
-        super().draw(screen)
+        super().draw(screen, paused)
         archer = self.archer_imgs[int(self.archer_frame)]
         if not self.moving and not paused:
             # Draw attacking motion
@@ -61,14 +61,19 @@ class LongArcher(Tower):
         worth = 0
         closest_enemy = []
         for enemy in enemies:
-            en_x = enemy.x + enemy.width
-            en_y = enemy.y + enemy.height
-            if self._check_inrange(en_x, en_y):
+            en_x = enemy.x
+            en_y = enemy.y
+            dis = self._check_inrange(en_x, en_y)
+            dis2 = self._check_inrange(en_x, en_y+enemy.height)
+            if dis:
                 self.in_range = True
-                closest_enemy.append(enemy)
+                closest_enemy.append((dis, enemy))
+            elif dis2:
+                self.in_range = True
+                closest_enemy.append((dis2, enemy))
         if closest_enemy:
-            closest_enemy.sort(key=lambda en: en.x)
-            first = closest_enemy[0]
+            closest_enemy.sort(key=lambda dat: dat[0])
+            first = closest_enemy[0][1]
             self._update_direction(first.x, first.y)
             # Attack when archer finished motion.
             if self.end:

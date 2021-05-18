@@ -1,6 +1,7 @@
 import pygame
 import math
 import settings
+import A_STAR_pathfinding as asp
 
 
 # TODO: Have some powerup spawn on map
@@ -18,14 +19,17 @@ class Enemy:
         self.speed = 3
         self.max_health = 3
         self.health = self.max_health
-        self.path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342), (768, 281),
-                     (784, 216), (813, 122), (859, 89), (945, 77), (1002, 103), (1028, 137), (1045, 189), (1051, 237),
-                     (1059, 281), (1081, 315), (1133, 343), (1171, 350), (1255, 370), (1290, 407), (1313, 461),
-                     (1306, 517), (1285, 570), (1254, 610), (1193, 631), (1142, 641), (1097, 647), (1051, 647),
-                     (922, 654), (892, 662), (881, 677), (853, 700), (811, 716), (767, 719), (217, 715), (179, 699),
-                     (138, 663), (119, 624), (111, 573), (99, 532), (80, 487),
-                     (54, 461), (25, 435), (-self.width, 427)]
-
+        self.main_path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342),
+                          (768, 281),
+                          (784, 216), (813, 122), (859, 89), (945, 77), (1002, 103), (1028, 137), (1045, 189),
+                          (1051, 237),
+                          (1059, 281), (1081, 315), (1133, 343), (1171, 350), (1255, 370), (1290, 407), (1313, 461),
+                          (1306, 517), (1285, 570), (1254, 610), (1193, 631), (1142, 641), (1097, 647), (1051, 647),
+                          (922, 654), (892, 662), (881, 677), (853, 700), (811, 716), (767, 719), (217, 715),
+                          (179, 699),
+                          (138, 663), (119, 624), (111, 573), (99, 532), (80, 487),
+                          (54, 461), (25, 435), (-self.width, 427)]
+        self.curr_path = self.main_path
         # Movement and animation
         self.new_slope = False
         self.flipped = False
@@ -36,15 +40,17 @@ class Enemy:
         self.out = False
         self.dead = False
         # to adjust y
-        for i in range(len(self.path)):
-            self.path[i] = list(self.path[i])
-            self.path[i][1] -= self.height // 2
+        for i in range(len(self.main_path)):
+            self.main_path[i] = list(self.main_path[i])
+            self.main_path[i][1] -= self.height // 2
         # Set position
-        self.x = self.path[0][0]
-        self.y = self.path[0][1]
+        self.x = self.main_path[0][0]
+        self.y = self.main_path[0][1]
         self.add_y = 0  # Amount to add and keep even speed
         self.add_x = 0
         self._update_move_values()
+        # Powerup:
+        self.targeting = None  # Contains target powerup
 
     def draw(self, screen):
         """
@@ -55,7 +61,8 @@ class Enemy:
         if self.out:
             return
         # Set enemy
-        self.move()
+        if not self.targeting:
+            self.curr_path = self.main_path
         # Draw enemy
         self.img = self.images[int(self.animation_index)]
         self.img = pygame.transform.flip(self.img, self.flipped, False)
@@ -90,29 +97,29 @@ class Enemy:
         if self.add_x > 0:
             self.flipped = False
             # exceeded end position
-            if (self.x + self.add_x) > self.path[self.path_pos + 1][0]:
-                self.x = self.path[self.path_pos + 1][0]  # set at end position
+            if (self.x + self.add_x) > self.curr_path[self.path_pos + 1][0]:
+                self.x = self.curr_path[self.path_pos + 1][0]  # set at end position
                 self.new_slope = True
         else:
             self.flipped = True  # moving left
             # exceeded end position
-            if (self.x + self.add_x) < self.path[self.path_pos + 1][0]:
-                self.x = self.path[self.path_pos + 1][0]  # set at end position
+            if (self.x + self.add_x) < self.curr_path[self.path_pos + 1][0]:
+                self.x = self.curr_path[self.path_pos + 1][0]  # set at end position
                 self.new_slope = True
         # Check position moving Up or Down.
         if self.add_y > 0:  # Down
             # exceeded end position
-            if (self.y + self.add_y) > self.path[self.path_pos + 1][1]:
-                self.y = self.path[self.path_pos + 1][1]  # set at end position
+            if (self.y + self.add_y) > self.curr_path[self.path_pos + 1][1]:
+                self.y = self.main_path[self.path_pos + 1][1]  # set at end position
                 self.new_slope = True
         else:
-            if (self.y + self.add_y) < self.path[self.path_pos + 1][1]:
-                self.y = self.path[self.path_pos + 1][1]  # set at end position
+            if (self.y + self.add_y) < self.curr_path[self.path_pos + 1][1]:
+                self.y = self.main_path[self.path_pos + 1][1]  # set at end position
                 self.new_slope = True
         if self.new_slope:  # Calculate next x,y values
             self.path_pos += 1
             # Out of frame
-            if (self.path_pos + 1) >= len(self.path):
+            if (self.path_pos + 1) >= len(self.curr_path):
                 self.out = True
                 return
             self._update_move_values()
@@ -121,7 +128,7 @@ class Enemy:
     def _update_move_values(self):
         """Calculates how to move according to angle"""
         start_p = list((self.x, self.y))
-        end_p = list(self.path[self.path_pos + 1])
+        end_p = list(self.curr_path[self.path_pos + 1])
         d = math.dist(start_p, end_p)
         xp = (start_p[0] * (d - self.speed) + end_p[0] * self.speed) / d
         yp = (start_p[1] * (d - self.speed) + end_p[1] * self.speed) / d
@@ -150,4 +157,13 @@ class Enemy:
             self.dead = True
             return self.worth
         return 0
+
+    def move_to_powerup(self, powerup):
+        """
+        set next path to power up.
+        :param powerup: Powerup
+        :return:
+        """
+        powerup.is_targeted = True
+        self.targeting = powerup
 
