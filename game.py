@@ -16,7 +16,7 @@ star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (6
 font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
-    [10, 10, 10],
+    [20, 0, 0],
     [50, 0, 0],
     [100, 0, 0],
     [0, 20, 0],
@@ -32,10 +32,8 @@ waves = [
 ]
 # for music
 pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
-pygame.mixer.music.set_volume(0.02)
+pygame.mixer.music.set_volume(0)
 
-
-# Todo: Actions during paused game.
 
 class Game:
 
@@ -45,7 +43,7 @@ class Game:
         # initalize main window settings
         self.screen = pygame.display.set_mode((settings.win_width, settings.win_height))
         # Enemies:
-        self.powerups = pygame.sprite.Group()
+        self.powerups = pygame.sprite.Group(Powerup((349, 370)))
         self.powerups.add()
         self.enemies = []
         # For towers:
@@ -82,30 +80,13 @@ class Game:
                 if time.time() - self.timer >= random.randrange(1, 6) / 3:
                     self.timer = time.time()
                     self._spawn_wave()
-                self._update_screen()
-                # Check enemies:
-                for e in self.enemies:
-                    # Enemies passed end.
-                    if e.out:
-                        self.lives -= 1
-                        self.enemies.remove(e)
-                    elif e.dead:  # killed
-                        self.enemies.remove(e)
+                self._handle_enemies()
                 if self.lives == 0:
                     print("Lost")
                     self.active = False
                     break
-                # Check attack_towers:
-                if self.enemies:
-                    for tw in self.attack_towers:
-                        self.money += tw.attack(self.enemies)
-                # Support towers:
-                for tower in self.support_towers:
-                    tower.support(self.attack_towers)
-                    tower.support(self.support_towers)
-                if self.moving_object:
-                    pos = pygame.mouse.get_pos()
-                    self.moving_object.move(pos[0], pos[1])
+            self._handle_towers()
+            self._update_screen()
         pygame.quit()
 
     def _spawn_wave(self):
@@ -158,14 +139,13 @@ class Game:
             self.play_pause_btn.change_img()
             self.play_pause_btn.draw(self.screen)
             pygame.display.update()
-        if not self.pause:
-            # Handle tower placement:
-            if self.moving_object:
-                self._place_object(pos)
-            # Handle click on tower:
-            elif not self._tower_press(pos):
-                # Handle click on buy menu:
-                self._menu_press(pos)
+        # Handle tower placement:
+        if self.moving_object:
+            self._place_object(pos)
+        # Handle click on tower:
+        elif not self._tower_press(pos):
+            # Handle click on buy menu:
+            self._menu_press(pos)
 
     def _tower_press(self, pos):
         """
@@ -271,16 +251,42 @@ class Game:
         self.screen.blit(txt, (40, 40))
 
     def _draw_objects(self):
+
         # Draw objects
         for enemy in self.enemies:
             enemy.draw(self.screen)
         for tower in (self.support_towers + self.attack_towers):
             if self.moving_object:
                 tower.draw_placement(self.screen)
-            tower.draw(self.screen)
+            tower.draw(self.screen, self.pause)
 
         if self.moving_object:
-            self.moving_object.draw(self.screen)
+            self.moving_object.draw(self.screen, self.pause)
+
+    def _handle_towers(self):
+        # Check attack_towers:
+        if not self.pause:
+            if self.enemies:
+                for tw in self.attack_towers:
+                    self.money += tw.attack(self.enemies)
+            # Support towers:
+            for tower in self.support_towers:
+                tower.support(self.attack_towers)
+                tower.support(self.support_towers)
+        if self.moving_object:
+            pos = pygame.mouse.get_pos()
+            self.moving_object.move(pos[0], pos[1])
+
+    def _handle_enemies(self):
+        # Check enemies:
+        for e in self.enemies:
+            e.move()
+            # Enemies passed end.
+            if e.out:
+                self.lives -= 1
+                self.enemies.remove(e)
+            elif e.dead:  # killed
+                self.enemies.remove(e)
 
 
 if __name__ == '__main__':

@@ -26,14 +26,15 @@ class LongArcher(Tower):
         self.curr_range = self.range
         self.end = False
 
-    def draw(self, screen):
+    def draw(self, screen, paused):
         """
         Draw tower+radius then animated archers
         :param screen: Surface
         :return: None
         """
         super().draw(screen)
-        if not self.moving:
+        archer = self.archer_imgs[int(self.archer_frame)]
+        if not self.moving and not paused:
             # Draw attacking motion
             if self.in_range:
                 self.end = False
@@ -45,11 +46,11 @@ class LongArcher(Tower):
                 self.archer_frame = 0
             archer = self.archer_imgs[int(self.archer_frame)]
             archer = pygame.transform.flip(archer, self.left, False)
-            # draw archer at middle of tower.
-            screen.blit(archer, (self.x - 25, self.y - 70))
-            # Draw arrows
             self.arrows.update()
-            self.arrows.draw(screen)
+        # draw archer at middle of tower.
+        screen.blit(archer, (self.x - 25, self.y - 70))
+        # Draw arrows
+        self.arrows.draw(screen)
 
     def attack(self, enemies):
         """
