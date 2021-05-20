@@ -16,7 +16,7 @@ star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (6
 font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
-    [20, 0, 0],
+    [0, 2, 0],
     [50, 0, 0],
     [100, 0, 0],
     [0, 20, 0],
@@ -40,10 +40,11 @@ class Game:
     def __init__(self):
         self.active = True
         self.timer = time.time()
+        self.pb_timer = time.time()
         # initalize main window settings
         self.screen = pygame.display.set_mode((settings.win_width, settings.win_height))
         # Enemies:
-        self.powerups = pygame.sprite.Group(Powerup((349, 370)))
+        self.powerups = pygame.sprite.Group()
         self.powerups.add()
         self.enemies = []
         # For towers:
@@ -74,8 +75,11 @@ class Game:
         while self.active:
             clock.tick(60)  # Limit framerate
             self._check_events()
-
             if not self.pause:
+                # spawn powerboost:
+                if time.time() - self.pb_timer >= random.randrange(1, 6):
+                    self.pb_timer = time.time()
+                    #self.spawn_powerboost()
                 # spawn new enemies:
                 if time.time() - self.timer >= random.randrange(1, 6) / 3:
                     self.timer = time.time()
@@ -280,13 +284,32 @@ class Game:
     def _handle_enemies(self):
         # Check enemies:
         for e in self.enemies:
-            e.move()
             # Enemies passed end.
             if e.out:
                 self.lives -= 1
                 self.enemies.remove(e)
             elif e.dead:  # killed
                 self.enemies.remove(e)
+            # Reached powerup:
+            if e.targeting:
+                if e.reached_powerup():
+                    self.powerups.remove(e.targeting)
+                    e.targeting = None
+            e.move()
+        # Move to powerup
+        for pb in self.powerups:
+            if not pb.is_targeted:
+                for e in self.enemies[::-1]:
+                    if not e.targeting:
+                        e.move_to_powerup(pb)
+                        break
+
+    def spawn_powerboost(self):
+        x = y = 0
+        while not map_grid[y, x]:
+            x = random.randrange(0, settings.win_width)
+            y = random.randrange(0, settings.win_height)
+        self.powerups.add(Powerup((x, y)))
 
 
 if __name__ == '__main__':

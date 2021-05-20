@@ -4,7 +4,8 @@ import A_STAR_pathfinding as asp
 
 """For map grid"""
 map_grid = asp.map_grid
-# node_grid = asp.create_node_grid(map_grid)
+node_grid = asp.create_node_grid(map_grid)
+
 """For Towers:"""
 # load long tower imgs
 ltower_imgs = [pygame.transform.scale(pygame.image.load(

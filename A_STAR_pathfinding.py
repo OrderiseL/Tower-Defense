@@ -56,7 +56,7 @@ def reconstruct_path(current):
     while current.parent is not None:
         path.append((current.col, current.row))
         current = current.parent
-    path.append((current.col, current.row))
+    path.append([current.col, current.row])
     path.reverse()
     return path
 

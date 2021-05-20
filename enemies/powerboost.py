@@ -30,9 +30,9 @@ class Powerup(pygame.sprite.Sprite):
         :return: none
         """
         enemy.health *= self.boost
-        enemy.width *= 1.5
-        enemy.height *= 1.5
+        enemy.max_health = enemy.health
+        enemy.width = int(enemy.width * 1.5)
+        enemy.height = int(enemy.height * 1.5)
         for i in range(len(enemy.images)):
             new_img = pygame.transform.scale(enemy.images[i], (enemy.width, enemy.height))
             enemy.images[i] = new_img
-

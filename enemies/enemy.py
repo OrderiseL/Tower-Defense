@@ -2,6 +2,7 @@ import pygame
 import math
 import settings
 import A_STAR_pathfinding as asp
+from loader import node_grid
 
 
 # TODO: Have some powerup spawn on map
@@ -19,7 +20,7 @@ class Enemy:
         self.speed = 3
         self.max_health = 3
         self.health = self.max_health
-        self.curr_path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342),
+        self.main_path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342),
                           (768, 281),
                           (784, 216), (813, 122), (859, 89), (945, 77), (1002, 103), (1028, 137), (1045, 189),
                           (1051, 237),
@@ -29,6 +30,12 @@ class Enemy:
                           (179, 699),
                           (138, 663), (119, 624), (111, 573), (99, 532), (80, 487),
                           (54, 461), (25, 435), (-self.width, 427)]
+        self.main_path_pos = 0
+        # to adjust y
+        for i in range(len(self.main_path)):
+            self.main_path[i] = list(self.main_path[i])
+            self.main_path[i][1] -= self.height // 2
+        self.curr_path = self.main_path
         # Movement and animation
         self.new_slope = False
         self.flipped = False
@@ -38,10 +45,6 @@ class Enemy:
         self.img = None
         self.out = False
         self.dead = False
-        # to adjust y
-        for i in range(len(self.curr_path)):
-            self.curr_path[i] = list(self.curr_path[i])
-            self.curr_path[i][1] -= self.height // 2
         # Set position
         self.x = self.curr_path[0][0]
         self.y = self.curr_path[0][1]
@@ -89,6 +92,8 @@ class Enemy:
             self.animation_index = 0
         self.x += self.add_x
         self.y += self.add_y
+        if (self.path_pos + 1) >= len(self.curr_path):
+            return
         # Check postion when moving right or left.
         if self.add_x > 0:
             self.flipped = False
@@ -163,4 +168,58 @@ class Enemy:
         powerup.is_targeted = True
         self.targeting = powerup
         dest = tuple(powerup.rect.center[::-1])
-        path = asp.a_star_search((self.y, self.x), dest, 2)
+        if self.x < 0:
+            self.x = 0
+        shortest_path = asp.a_star_search((int(self.y), int(self.x)), dest, node_grid[:])
+        end = shortest_path[-1]
+        shortest_path = shortest_path[:-1:self.speed * 2]
+        shortest_path.append(end)
+        shortest_path[0][0] = -self.width
+        self.curr_path = shortest_path
+        # to adjust y
+        for i in range(len(self.curr_path)):
+            self.curr_path[i] = list(self.curr_path[i])
+            self.curr_path[i][1] -= self.height // 2
+        self.main_path_pos = self.path_pos
+        self.path_pos = 0
+
+    def find_main_pathpos(self):
+        while True:
+            # Check postion when moving right or left.
+            if self.add_x > 0:
+                self.flipped = False
+                # exceeded end position
+                if (self.x + self.add_x) > self.main_path[self.main_path_pos + 1][0]:
+                    self.new_slope = True
+            else:
+                self.flipped = True  # moving left
+                # exceeded end position
+                if (self.x + self.add_x) < self.main_path[self.main_path_pos + 1][0]:
+                    self.new_slope = True
+            # Check position moving Up or Down.
+            if self.add_y > 0:  # Down
+                # exceeded end position
+                if (self.y + self.add_y) > self.main_path[self.main_path_pos + 1][1]:
+                    self.new_slope = True
+            else:
+                if (self.y + self.add_y) < self.main_path[self.main_path_pos + 1][1]:
+                    self.new_slope = True
+            if self.new_slope:  # Calculate next x,y values
+                self.main_path_pos += 1
+                # Out of frame
+                self.new_slope = False
+                if (self.main_path_pos + 1) >= len(self.main_path):
+                    self.out = True
+                    return
+            else:
+                break
+
+    def reached_powerup(self):
+        x, y = self.targeting.rect.center
+        if self.collide(x, y):
+            self.targeting.power_up(self)
+            self.curr_path = self.main_path
+            self.find_main_pathpos()
+            self.path_pos = self.main_path_pos
+            return True
+        return False
