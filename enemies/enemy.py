@@ -156,6 +156,8 @@ class Enemy:
         self.health -= damage
         if self.health <= 0:
             self.dead = True
+            if self.targeting:
+                self.targeting.is_targeted = False
             return self.worth
         return 0
 
@@ -170,7 +172,7 @@ class Enemy:
         dest = tuple(powerup.rect.center[::-1])
         if self.x < 0:
             self.x = 0
-        shortest_path = asp.a_star_search((int(self.y), int(self.x)), dest, node_grid[:])
+        shortest_path = asp.a_star_search((int(self.y), int(self.x)), dest, node_grid)
         end = shortest_path[-1]
         shortest_path = shortest_path[:-1:self.speed * 2]
         shortest_path.append(end)

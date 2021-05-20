@@ -48,14 +48,14 @@ def heuristic(src, dest):
     return math.dist(src, dest)
 
 
-def reconstruct_path(current):
+def reconstruct_path(came_from, current):
     """
     :returns: list of positions from start to end
     """
     path = []
-    while current.parent is not None:
-        path.append((current.col, current.row))
-        current = current.parent
+    while current in came_from:
+        path.append([current.col, current.row])
+        current = came_from[current]
     path.append([current.col, current.row])
     path.reverse()
     return path
@@ -72,22 +72,23 @@ def a_star_search(src, dest, node_grid):
     came_from = {}  # keep track of nodes in path
     open_set_hash = {}  # Track items in openset
     # Reset start node
-    node_grid[src[0]][src[1]].g = 0
-    f = node_grid[src[0]][src[1]].g + heuristic(src, dest)
+    g_score = {node: float("inf") for row in node_grid for node in row}
+    g_score[node_grid[src[0]][src[1]]] = 0
+    f = g_score[node_grid[src[0]][src[1]]] + heuristic(src, dest)
     open_set.put((f, node_grid[src[0]][src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
         current = open_set.get()[1]
 
         if (current.row, current.col) == dest:
-            return reconstruct_path(current)
+            return reconstruct_path(came_from, current)
 
         open_set_hash.remove((current.row, current.col))
         for neighbor in current.neighbors:
-            est_g = current.g + heuristic((neighbor.row, neighbor.col), (current.row, current.col))
-            if est_g < neighbor.g:
-                neighbor.parent = current
-                neighbor.g = est_g
+            est_g = g_score[current] + heuristic((neighbor.row, neighbor.col), (current.row, current.col))
+            if est_g < g_score[neighbor]:
+                came_from[neighbor] = current
+                g_score[neighbor] = est_g
                 f = heuristic((neighbor.row, neighbor.col), dest)
                 if (neighbor.row, neighbor.col) not in open_set_hash:
                     open_set_hash.add((neighbor.row, neighbor.col))

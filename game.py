@@ -43,9 +43,10 @@ class Game:
         self.pb_timer = time.time()
         # initalize main window settings
         self.screen = pygame.display.set_mode((settings.win_width, settings.win_height))
+        settings.bg = settings.bg.convert_alpha()
         # Enemies:
         self.powerups = pygame.sprite.Group()
-        self.powerups.add()
+        # self.spawn_powerboost()
         self.enemies = []
         # For towers:
         self.attack_towers = []
@@ -77,9 +78,9 @@ class Game:
             self._check_events()
             if not self.pause:
                 # spawn powerboost:
-                if time.time() - self.pb_timer >= random.randrange(1, 6):
+                if time.time() - self.pb_timer >= random.randrange(5, 6):
                     self.pb_timer = time.time()
-                    #self.spawn_powerboost()
+                    # self.spawn_powerboost()
                 # spawn new enemies:
                 if time.time() - self.timer >= random.randrange(1, 6) / 3:
                     self.timer = time.time()
@@ -120,7 +121,10 @@ class Game:
                 print("Exit")
                 self.active = False
             if event.type == pygame.MOUSEBUTTONDOWN:
-                self._mouse_down_events()
+                if event.button == pygame.BUTTON_RIGHT:
+                    self.moving_object = None
+                else:
+                    self._mouse_down_events()
 
     def _mouse_down_events(self):
         """
