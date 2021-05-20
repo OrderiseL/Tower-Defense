@@ -4,6 +4,8 @@ import matplotlib.pyplot as plt
 import math
 from queue import PriorityQueue
 
+SQUARE_SIZE = 10
+
 
 class Node:
     """Class to represent a node on the node_grid"""
@@ -11,13 +13,13 @@ class Node:
     def __init__(self):
         self.row = 0
         self.col = 0
-        self.g = math.inf
         self.is_blocked = False
         self.parent = None
         self.neighbors = []
 
     def update_neighbors(self, node_grid):
-
+        MAX_ROW = node_grid.shape[0]
+        MAX_COL = node_grid.shape[1]
         self.neighbors = []
         if self.row < MAX_ROW - 1 and not node_grid[self.row + 1][self.col].is_blocked:  # DOWN
             self.neighbors.append(node_grid[self.row + 1][self.col])
@@ -50,6 +52,8 @@ def heuristic(src, dest):
 
 def reconstruct_path(came_from, current):
     """
+    :param current: Node
+    :param came_from: Dictionary
     :returns: list of positions from start to end
     """
     path = []
@@ -73,9 +77,9 @@ def a_star_search(src, dest, node_grid):
     open_set_hash = {}  # Track items in openset
     # Reset start node
     g_score = {node: float("inf") for row in node_grid for node in row}
-    g_score[node_grid[src[0]][src[1]]] = 0
-    f = g_score[node_grid[src[0]][src[1]]] + heuristic(src, dest)
-    open_set.put((f, node_grid[src[0]][src[1]]))  # (f,Node)
+    g_score[node_grid[src[0],src[1]]] = 0
+    f = g_score[node_grid[src[0],src[1]]] + heuristic(src, dest)
+    open_set.put((f, node_grid[src[0],src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
         current = open_set.get()[1]
@@ -105,14 +109,12 @@ def process_to_grid(path):
     """
     # Open and fit to map
     img = Image.open(path)
-    img = img.convert('L')
+    thresh = 200
+    fn = lambda x: 255 if x > thresh else 0
+    img = img.convert('L').point(fn, mode='1')
+    width, height = img.size
+    img = img.resize((width // SQUARE_SIZE, height // SQUARE_SIZE), Image.BICUBIC)
     return np.array(img)
-
-
-map_grid = process_to_grid("used_assets/cleaned.png")
-plt.imshow(map_grid, cmap="gray")  # Show map_grid
-MAX_ROW = map_grid.shape[0]
-MAX_COL = map_grid.shape[1]
 
 
 def get_pos(pos, division):
@@ -122,43 +124,39 @@ def get_pos(pos, division):
     :param division:
     :return: tuple(x,y)
     """
-    x = pos[0] * division
-    y = pos[1] * division
+    x = pos[0] * SQUARE_SIZE
+    y = pos[1] * SQUARE_SIZE
     return x, y
 
 
-def get_reverse_pos(pos, division):
-    """
-    returns row,col values to access grid.
-    :param pos:
-    :param division:
-    :return: tuple(r,c)
-    """
-    r = round(pos[1] / division)
-    c = round(pos[0] / division)
-    return r, c
-
-
 def create_node_grid(map_grid):
+    """
+
+    :param map_grid: Ndarray
+    :return: Node ndarray
+    """
     # Create a Node node_grid from map_grid node_grid.
-    node_grid = [[]]
-    for i in range(MAX_ROW):
-        for j in range(MAX_COL):
+    rows, cols = map_grid.shape
+    node_grid = np.empty(map_grid.shape, Node)
+    for i in range(rows):
+        for j in range(cols):
             new_node = Node()
             new_node.row = i
             new_node.col = j
             # when cell is False it means pixel is an obstacle.
             if not map_grid[i, j]:
                 new_node.is_blocked = True
-            node_grid[i].append(new_node)
-        node_grid.append([])
-    for i in range(MAX_ROW):
-        for j in range(MAX_COL):
-            node_grid[i][j].update_neighbors(node_grid)
+            node_grid[i,j] = new_node
+    for i in range(rows):
+        for j in range(cols):
+            node_grid[i,j].update_neighbors(node_grid)
+
     return node_grid
 
 
 if __name__ == '__main__':
-    # Create a node_grid from map_grid .
+    # Create a node_grid from map_grid.
+    map_grid = process_to_grid(r"used_assets\cleaned.png")
+    map_plot = plt.imshow(map_grid, cmap="gray")
     node_grid = create_node_grid(map_grid)
-    print(a_star_search((270, 0), (430, 0), node_grid))
+    print(a_star_search((26, 0), (43, 0), node_grid))
