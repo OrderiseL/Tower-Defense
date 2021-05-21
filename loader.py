@@ -3,8 +3,8 @@ import settings
 import A_STAR_pathfinding as asp
 
 """For map grid"""
-map_grid = asp.map_grid
-node_grid = [[]]
+map_grid = asp.process_to_grid(r"used_assets\cleaned.png")
+node_grid = asp.create_node_grid(map_grid)
 """For Towers:"""
 # load long tower imgs
 ltower_imgs = [pygame.transform.scale(pygame.image.load(
@@ -103,3 +103,16 @@ buy_speed = pygame.transform.scale(pygame.image.load(r"used_assets/buy_speed.png
 play_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_play.png"), (90, 90))
 music_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_sound.png"), (110, 110))
 musicoff_img = pygame.transform.scale(pygame.image.load(r"used_assets/menu/button_sound_off.png"), (110, 110))
+
+
+def convert_alpha():
+    for i in range(len(wiz_images)):
+        wiz_images[i] = wiz_images[i].convert_alpha()
+    for i in range(len(sc_images)):
+        sc_images[i] = sc_images[i].convert_alpha()
+    for i in range(len(cl_images)):
+        cl_images[i] = cl_images[i].convert_alpha()
+    for i in range(len(sarcher_imgs)):
+        sarcher_imgs[i] = sarcher_imgs[i].convert_alpha()
+    for i in range(len(larcher_imgs)):
+        larcher_imgs[i] = larcher_imgs[i].convert_alpha()

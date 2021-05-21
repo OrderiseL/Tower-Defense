@@ -58,9 +58,9 @@ def reconstruct_path(came_from, current):
     """
     path = []
     while current in came_from:
-        path.append([current.col, current.row])
+        path.append([current.row, current.col])
         current = came_from[current]
-    path.append([current.col, current.row])
+    path.append([current.row, current.col])
     path.reverse()
     return path
 
@@ -77,9 +77,9 @@ def a_star_search(src, dest, node_grid):
     open_set_hash = {}  # Track items in openset
     # Reset start node
     g_score = {node: float("inf") for row in node_grid for node in row}
-    g_score[node_grid[src[0],src[1]]] = 0
-    f = g_score[node_grid[src[0],src[1]]] + heuristic(src, dest)
-    open_set.put((f, node_grid[src[0],src[1]]))  # (f,Node)
+    g_score[node_grid[src[0], src[1]]] = 0
+    f = g_score[node_grid[src[0], src[1]]] + heuristic(src, dest)
+    open_set.put((f, node_grid[src[0], src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
         current = open_set.get()[1]
@@ -117,16 +117,26 @@ def process_to_grid(path):
     return np.array(img)
 
 
-def get_pos(pos, division):
+def get_pos(pos):
     """
     returns x,y values scaled to map.
-    :param pos:
-    :param division:
+    :param pos: (row,col)
     :return: tuple(x,y)
     """
-    x = pos[0] * SQUARE_SIZE
-    y = pos[1] * SQUARE_SIZE
+    y = pos[0] * SQUARE_SIZE
+    x = pos[1] * SQUARE_SIZE
     return x, y
+
+
+def get_reverse_pos(pos):
+    """
+    returns x,y values scaled to map.
+    :param pos: (x,y)
+    :return: tuple(r,c)
+    """
+    c = round(pos[0] / SQUARE_SIZE)
+    r = round(pos[1] / SQUARE_SIZE)
+    return r, c
 
 
 def create_node_grid(map_grid):
@@ -146,17 +156,18 @@ def create_node_grid(map_grid):
             # when cell is False it means pixel is an obstacle.
             if not map_grid[i, j]:
                 new_node.is_blocked = True
-            node_grid[i,j] = new_node
+            node_grid[i, j] = new_node
     for i in range(rows):
         for j in range(cols):
-            node_grid[i,j].update_neighbors(node_grid)
+            node_grid[i, j].update_neighbors(node_grid)
 
     return node_grid
 
 
+# Create a node_grid from map_grid.
+map_grid = process_to_grid(r"used_assets\cleaned.png")
+node_grid = create_node_grid(map_grid)
+# print(a_star_search((26, 0), (43, 0), node_grid))
+map_plot = plt.imshow(map_grid, cmap="gray")
 if __name__ == '__main__':
-    # Create a node_grid from map_grid.
-    map_grid = process_to_grid(r"used_assets\cleaned.png")
-    map_plot = plt.imshow(map_grid, cmap="gray")
-    node_grid = create_node_grid(map_grid)
-    print(a_star_search((26, 0), (43, 0), node_grid))
+    pass

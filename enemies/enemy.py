@@ -20,21 +20,8 @@ class Enemy:
         self.speed = 3
         self.max_health = 3
         self.health = self.max_health
-        self.main_path = [(-self.width, 293), (208, 294), (265, 324), (295, 355), (349, 370), (687, 364), (725, 342),
-                          (768, 281),
-                          (784, 216), (813, 122), (859, 89), (945, 77), (1002, 103), (1028, 137), (1045, 189),
-                          (1051, 237),
-                          (1059, 281), (1081, 315), (1133, 343), (1171, 350), (1255, 370), (1290, 407), (1313, 461),
-                          (1306, 517), (1285, 570), (1254, 610), (1193, 631), (1142, 641), (1097, 647), (1051, 647),
-                          (922, 654), (892, 662), (881, 677), (853, 700), (811, 716), (767, 719), (217, 715),
-                          (179, 699),
-                          (138, 663), (119, 624), (111, 573), (99, 532), (80, 487),
-                          (54, 461), (25, 435), (-self.width, 427)]
+        self.main_path = asp.a_star_search((26, 0), (43, 0), node_grid)
         self.main_path_pos = 0
-        # to adjust y
-        for i in range(len(self.main_path)):
-            self.main_path[i] = list(self.main_path[i])
-            self.main_path[i][1] -= self.height // 2
         self.curr_path = self.main_path
         # Movement and animation
         self.new_slope = False
@@ -46,8 +33,9 @@ class Enemy:
         self.out = False
         self.dead = False
         # Set position
-        self.x = self.curr_path[0][0]
-        self.y = self.curr_path[0][1]
+        self.row, self.col = self.curr_path[0]
+        self.x, self.y = asp.get_pos(self.curr_path[0])
+        self.x = -self.width
         self.add_y = 0  # Amount to add and keep even speed
         self.add_x = 0
         self._update_move_values()
@@ -95,27 +83,29 @@ class Enemy:
         if (self.path_pos + 1) >= len(self.curr_path):
             return
         # Check postion when moving right or left.
+        end = self.curr_path[self.path_pos + 1]
+        e_x, e_y = asp.get_pos(end)
         if self.add_x > 0:
             self.flipped = False
             # exceeded end position
-            if (self.x + self.add_x) > self.curr_path[self.path_pos + 1][0]:
-                self.x = self.curr_path[self.path_pos + 1][0]  # set at end position
+            if (self.x + self.add_x) > e_x:
+                # self.x = e_x  # set at end position
                 self.new_slope = True
         else:
             self.flipped = True  # moving left
             # exceeded end position
-            if (self.x + self.add_x) < self.curr_path[self.path_pos + 1][0]:
-                self.x = self.curr_path[self.path_pos + 1][0]  # set at end position
+            if (self.x + self.add_x) < e_x:
+                # self.x = e_x  # set at end position
                 self.new_slope = True
         # Check position moving Up or Down.
         if self.add_y > 0:  # Down
             # exceeded end position
-            if (self.y + self.add_y) > self.curr_path[self.path_pos + 1][1]:
-                self.y = self.curr_path[self.path_pos + 1][1]  # set at end position
+            if (self.y + self.add_y) > e_y:
+                # self.y = e_y  # set at end position
                 self.new_slope = True
         else:
-            if (self.y + self.add_y) < self.curr_path[self.path_pos + 1][1]:
-                self.y = self.curr_path[self.path_pos + 1][1]  # set at end position
+            if (self.y + self.add_y) < e_y:
+                # self.y = e_y  # set at end position
                 self.new_slope = True
         if self.new_slope:  # Calculate next x,y values
             self.path_pos += 1
@@ -130,6 +120,7 @@ class Enemy:
         """Calculates how to move according to angle"""
         start_p = list((self.x, self.y))
         end_p = list(self.curr_path[self.path_pos + 1])
+        end_p = asp.get_pos(end_p)
         d = math.dist(start_p, end_p)
         xp = (start_p[0] * (d - self.speed) + end_p[0] * self.speed) / d
         yp = (start_p[1] * (d - self.speed) + end_p[1] * self.speed) / d
@@ -169,42 +160,38 @@ class Enemy:
         """
         powerup.is_targeted = True
         self.targeting = powerup
-        dest = tuple(powerup.rect.center[::-1])
+        dest = tuple(powerup.rect.center)
+        dest = asp.get_reverse_pos(dest)
         if self.x < 0:
             self.x = 0
-        shortest_path = asp.a_star_search((int(self.y), int(self.x)), dest, node_grid)
-        end = shortest_path[-1]
-        shortest_path = shortest_path[:-1:self.speed * 2]
-        shortest_path.append(end)
-        shortest_path[0][0] = -self.width
+        src = asp.get_reverse_pos((int(self.x), int(self.y)))
+        shortest_path = asp.a_star_search(src, dest, node_grid)
         self.curr_path = shortest_path
-        # to adjust y
-        for i in range(len(self.curr_path)):
-            self.curr_path[i] = list(self.curr_path[i])
-            self.curr_path[i][1] -= self.height // 2
         self.main_path_pos = self.path_pos
         self.path_pos = 0
 
     def find_main_pathpos(self):
+        end = self.main_path[self.path_pos + 1]
+        e_x, e_y = asp.get_pos(end)
         while True:
             # Check postion when moving right or left.
             if self.add_x > 0:
                 self.flipped = False
                 # exceeded end position
-                if (self.x + self.add_x) > self.main_path[self.main_path_pos + 1][0]:
+                if (self.x + self.add_x) > e_x:
                     self.new_slope = True
             else:
                 self.flipped = True  # moving left
                 # exceeded end position
-                if (self.x + self.add_x) < self.main_path[self.main_path_pos + 1][0]:
+                if (self.x + self.add_x) < e_x:
                     self.new_slope = True
             # Check position moving Up or Down.
             if self.add_y > 0:  # Down
                 # exceeded end position
-                if (self.y + self.add_y) > self.main_path[self.main_path_pos + 1][1]:
+                if (self.y + self.add_y) > e_y:
                     self.new_slope = True
             else:
-                if (self.y + self.add_y) < self.main_path[self.main_path_pos + 1][1]:
+                if (self.y + self.add_y) <e_y:
                     self.new_slope = True
             if self.new_slope:  # Calculate next x,y values
                 self.main_path_pos += 1

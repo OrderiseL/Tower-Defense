@@ -1,4 +1,4 @@
-import pygame
+import pygame,PIL.Image
 from enemies.enemy_types import *
 import settings
 from towers.tower_types import *
@@ -44,9 +44,10 @@ class Game:
         # initalize main window settings
         self.screen = pygame.display.set_mode((settings.win_width, settings.win_height))
         settings.bg = settings.bg.convert_alpha()
+        loader.convert_alpha()
         # Enemies:
         self.powerups = pygame.sprite.Group()
-        # self.spawn_powerboost()
+        self.spawn_powerboost()
         self.enemies = []
         # For towers:
         self.attack_towers = []
@@ -80,7 +81,7 @@ class Game:
                 # spawn powerboost:
                 if time.time() - self.pb_timer >= random.randrange(5, 6):
                     self.pb_timer = time.time()
-                    # self.spawn_powerboost()
+                    self.spawn_powerboost()
                 # spawn new enemies:
                 if time.time() - self.timer >= random.randrange(1, 6) / 3:
                     self.timer = time.time()
@@ -88,8 +89,8 @@ class Game:
                 self._handle_enemies()
                 if self.lives == 0:
                     print("Lost")
-                    self.active = False
-                    break
+                    #self.active = False
+                    #break
             self._handle_towers()
             self._update_screen()
         pygame.quit()
@@ -214,11 +215,12 @@ class Game:
         :param pos:
         :return: bool
         """
+        r, c = asp.get_reverse_pos(pos)
         # check Tower not on path or other tower
         for tower in (self.support_towers + self.attack_towers):
             if self.moving_object.has_collided(tower) or \
-                    loader.map_grid[pos[1], pos[0]] or \
-                    loader.map_grid[pos[1] + settings.tower_height // 2, pos[0]]:
+                    loader.map_grid[r, c] or \
+                    loader.map_grid[r, c]:
                 self.moving_object = None
                 return False
         # Check tower not on menu:
@@ -309,10 +311,12 @@ class Game:
                         break
 
     def spawn_powerboost(self):
-        x = y = 0
-        while not map_grid[y, x]:
-            x = random.randrange(0, settings.win_width)
-            y = random.randrange(0, settings.win_height)
+        r = c = 0
+        rows, cols = map_grid.shape
+        while not map_grid[r, c]:
+            r = random.randrange(0, rows)
+            c = random.randrange(0, cols)
+        x, y = asp.get_pos((r, c))
         self.powerups.add(Powerup((x, y)))
 
 
