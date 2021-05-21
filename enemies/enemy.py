@@ -2,7 +2,7 @@ import pygame
 import math
 import settings
 import A_STAR_pathfinding as asp
-from loader import node_grid
+from loader import node_grid, map_grid
 
 
 # TODO: Have some powerup spawn on map
@@ -23,6 +23,7 @@ class Enemy:
         self.main_path = asp.a_star_search((26, 0), (43, 0), node_grid)
         self.main_path_pos = 0
         self.curr_path = self.main_path
+        self._adjust_path()
         # Movement and animation
         self.new_slope = False
         self.flipped = False
@@ -167,48 +168,34 @@ class Enemy:
         src = asp.get_reverse_pos((int(self.x), int(self.y)))
         shortest_path = asp.a_star_search(src, dest, node_grid)
         self.curr_path = shortest_path
+        self._adjust_path()
         self.main_path_pos = self.path_pos
         self.path_pos = 0
-
-    def find_main_pathpos(self):
-        end = self.main_path[self.path_pos + 1]
-        e_x, e_y = asp.get_pos(end)
-        while True:
-            # Check postion when moving right or left.
-            if self.add_x > 0:
-                self.flipped = False
-                # exceeded end position
-                if (self.x + self.add_x) > e_x:
-                    self.new_slope = True
-            else:
-                self.flipped = True  # moving left
-                # exceeded end position
-                if (self.x + self.add_x) < e_x:
-                    self.new_slope = True
-            # Check position moving Up or Down.
-            if self.add_y > 0:  # Down
-                # exceeded end position
-                if (self.y + self.add_y) > e_y:
-                    self.new_slope = True
-            else:
-                if (self.y + self.add_y) <e_y:
-                    self.new_slope = True
-            if self.new_slope:  # Calculate next x,y values
-                self.main_path_pos += 1
-                # Out of frame
-                self.new_slope = False
-                if (self.main_path_pos + 1) >= len(self.main_path):
-                    self.out = True
-                    return
-            else:
-                break
 
     def reached_powerup(self):
         x, y = self.targeting.rect.center
         if self.collide(x, y):
             self.targeting.power_up(self)
-            self.curr_path = self.main_path
-            self.find_main_pathpos()
-            self.path_pos = self.main_path_pos
+            # New path to end
+            self._move_to_end()
             return True
         return False
+
+    def _move_to_end(self):
+        # New path to end
+        src = asp.get_reverse_pos((int(self.x), int(self.y)))
+        shortest_path = asp.a_star_search(src, (43, 0), node_grid)
+        self.curr_path = shortest_path
+        self._adjust_path()
+        self.main_path_pos = self.path_pos
+        self.path_pos = 0
+
+    def _adjust_path(self):
+        squares = self.height // asp.SQUARE_SIZE
+        for i in range(len(self.curr_path)):
+            r, c = self.curr_path[i]
+            while not map_grid[r + squares, c]:
+                r -= 1
+            while not map_grid[r, c + squares]:
+                c -= 1
+            self.curr_path[i] = (r, c)
