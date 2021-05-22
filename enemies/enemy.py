@@ -17,7 +17,7 @@ class Enemy:
         self.worth = 50
         self.width = settings.wiz_width
         self.height = settings.wiz_height
-        self.speed = 3
+        self.speed = 1
         self.max_health = 3
         self.health = self.max_health
         self.main_path = asp.a_star_search((26, 0), (43, 0), node_grid)
@@ -26,7 +26,7 @@ class Enemy:
         self._adjust_path()
         # Movement and animation
         self.new_slope = False
-        self.flipped = False
+        self.left = False
         self.animation_index = 0
         self.path_pos = 0
         self.images = []  # Class Variable
@@ -53,7 +53,7 @@ class Enemy:
             return
         # Draw enemy
         self.img = self.images[int(self.animation_index)]
-        self.img = pygame.transform.flip(self.img, self.flipped, False)
+        self.img = pygame.transform.flip(self.img, self.left, False)
         screen.blit(self.img, (int(self.x), int(self.y)))
         # Draw Health bar
         self.draw_health_bar(screen)
@@ -87,13 +87,11 @@ class Enemy:
         end = self.curr_path[self.path_pos + 1]
         e_x, e_y = asp.get_pos(end)
         if self.add_x > 0:
-            self.flipped = False
             # exceeded end position
             if (self.x + self.add_x) > e_x:
                 # self.x = e_x  # set at end position
                 self.new_slope = True
         else:
-            self.flipped = True  # moving left
             # exceeded end position
             if (self.x + self.add_x) < e_x:
                 # self.x = e_x  # set at end position
@@ -127,6 +125,10 @@ class Enemy:
         yp = (start_p[1] * (d - self.speed) + end_p[1] * self.speed) / d
         self.add_x = xp - start_p[0]
         self.add_y = yp - start_p[1]
+        if self.add_x > 0:
+            self.left = False
+        elif self.add_x < 0:
+            self.left = True  # moving left
 
     def collide(self, x, y):
         """
@@ -148,7 +150,7 @@ class Enemy:
         self.health -= damage
         if self.health <= 0:
             self.dead = True
-            if self.targeting:
+            if self.targeting != -1 and self.targeting is not None:
                 self.targeting.is_targeted = False
             return self.worth
         return 0
@@ -165,29 +167,32 @@ class Enemy:
         dest = asp.get_reverse_pos(dest)
         if self.x < 0:
             self.x = 0
-        src = asp.get_reverse_pos((int(self.x), int(self.y)))
-        shortest_path = asp.a_star_search(src, dest, node_grid)
-        self.curr_path = shortest_path
-        self._adjust_path()
-        self.main_path_pos = self.path_pos
-        self.path_pos = 0
+        self.move_to_target(dest)
+        self._update_move_values()
 
     def reached_powerup(self):
+        r, c = self.curr_path[self.path_pos]
         x, y = self.targeting.rect.center
         if self.collide(x, y):
             self.targeting.power_up(self)
             # New path to end
-            self._move_to_end()
+            self.move_to_target((43, 0))
+            self._update_move_values()
             return True
+        elif self.left:
+            self.curr_path.append([r + 2, c])
+        else:
+            self.curr_path.append([r - 2, c])
         return False
 
-    def _move_to_end(self):
+    def move_to_target(self,dest):
         # New path to end
-        src = asp.get_reverse_pos((int(self.x), int(self.y)))
-        shortest_path = asp.a_star_search(src, (43, 0), node_grid)
+        src = asp.get_reverse_pos((int(self.x+self.width//2), int(self.y+self.height//2)))
+        shortest_path = asp.a_star_search(src, dest, node_grid)
+        if not shortest_path:
+            print()
         self.curr_path = shortest_path
         self._adjust_path()
-        self.main_path_pos = self.path_pos
         self.path_pos = 0
 
     def _adjust_path(self):

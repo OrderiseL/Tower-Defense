@@ -297,10 +297,10 @@ class Game:
             elif e.dead:  # killed
                 self.enemies.remove(e)
             # Reached powerup:
-            if e.targeting:
+            if isinstance(e.targeting,Powerup):
                 if e.reached_powerup():
                     self.powerups.remove(e.targeting)
-                    e.targeting = None
+                    e.targeting = -1
             e.move()
         # Move to powerup
         for pb in self.powerups:
@@ -313,9 +313,9 @@ class Game:
     def spawn_powerboost(self):
         r = c = 0
         rows, cols = map_grid.shape
-        while not map_grid[r, c]:
-            r = random.randrange(0, rows)
-            c = random.randrange(0, cols)
+        while not map_grid[r+2, c] or not map_grid[r, c+2] or not map_grid[r, c]:
+            r = random.randrange(0, rows-2)
+            c = random.randrange(0, cols-2)
         x, y = asp.get_pos((r, c))
         self.powerups.add(Powerup((x, y)))
 
