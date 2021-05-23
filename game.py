@@ -16,8 +16,8 @@ star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (6
 font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
-    [0, 2, 0],
-    [50, 0, 0],
+    [2, 0, 0],
+    [3, 2,1],
     [100, 0, 0],
     [0, 20, 0],
     [0, 50, 0],
@@ -47,7 +47,6 @@ class Game:
         loader.convert_alpha()
         # Enemies:
         self.powerups = pygame.sprite.Group()
-        self.spawn_powerboost()
         self.enemies = []
         # For towers:
         self.attack_towers = []
@@ -150,7 +149,7 @@ class Game:
             pygame.display.update()
         # Handle tower placement:
         if self.moving_object:
-            self._place_object(pos)
+            self._place_tower(pos)
         # Handle click on tower:
         elif not self._tower_press(pos):
             # Handle click on buy menu:
@@ -197,7 +196,7 @@ class Game:
                 self.moving_object.cost = cost
                 self.moving_object.moving = True
 
-    def _place_object(self, pos):
+    def _place_tower(self, pos):
         if not self._is_valid_position(pos):
             return False
         # Place it.
@@ -218,11 +217,11 @@ class Game:
         r, c = asp.get_reverse_pos(pos)
         # check Tower not on path or other tower
         for tower in (self.support_towers + self.attack_towers):
-            if self.moving_object.has_collided(tower) or \
-                    loader.map_grid[r, c] or \
-                    loader.map_grid[r, c]:
+            if self.moving_object.has_collided(tower):
                 self.moving_object = None
                 return False
+        if loader.map_grid[r, c]:
+            return False
         # Check tower not on menu:
         if self.buy_menu.is_clicked(pos[0], pos[1]):
             return False
@@ -306,15 +305,15 @@ class Game:
         for pb in self.powerups:
             if not pb.is_targeted:
                 for e in self.enemies[::-1]:
-                    if not e.targeting:
+                    if e.targeting is None:
                         e.move_to_powerup(pb)
                         break
 
     def spawn_powerboost(self):
         r = c = 0
         rows, cols = map_grid.shape
-        while not map_grid[r+2, c] or not map_grid[r, c+2] or not map_grid[r, c]:
-            r = random.randrange(0, rows-2)
+        while not map_grid[r+2, c] or not map_grid[r, c+2] or not map_grid[r-2, c]:
+            r = random.randrange(0, rows-10)
             c = random.randrange(0, cols-2)
         x, y = asp.get_pos((r, c))
         self.powerups.add(Powerup((x, y)))

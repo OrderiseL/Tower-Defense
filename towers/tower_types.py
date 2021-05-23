@@ -3,9 +3,6 @@ from loader import *
 from projectile import Arrow
 
 
-# TODO: Attack first enemy.
-
-
 class LongArcher(Tower):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -64,7 +61,7 @@ class LongArcher(Tower):
             en_x = enemy.x
             en_y = enemy.y
             dis = self._check_inrange(en_x, en_y)
-            dis2 = self._check_inrange(en_x, en_y+enemy.height)
+            dis2 = self._check_inrange(en_x, en_y + enemy.height)
             if dis:
                 self.in_range = True
                 closest_enemy.append((dis, enemy))

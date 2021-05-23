@@ -5,7 +5,7 @@ import A_STAR_pathfinding as asp
 from loader import node_grid, map_grid
 
 
-# TODO: Have some powerup spawn on map
+# TODO: Fix pathfinding
 
 class Enemy:
     """
@@ -17,16 +17,15 @@ class Enemy:
         self.worth = 50
         self.width = settings.wiz_width
         self.height = settings.wiz_height
-        self.speed = 1
+        self.speed = 2
         self.max_health = 3
         self.health = self.max_health
-        self.main_path = asp.a_star_search((26, 0), (43, 0), node_grid)
-        self.main_path_pos = 0
-        self.curr_path = self.main_path
-        self._adjust_path()
+        self.curr_path = asp.a_star_search((26, 0), (43, 0), node_grid)
+        self.curr_path = self._adjust_path(self.curr_path)
         # Movement and animation
         self.new_slope = False
         self.left = False
+        self.change_count = 0
         self.animation_index = 0
         self.path_pos = 0
         self.images = []  # Class Variable
@@ -126,9 +125,15 @@ class Enemy:
         self.add_x = xp - start_p[0]
         self.add_y = yp - start_p[1]
         if self.add_x > 0:
-            self.left = False
+            self.change_count += 1
+            if self.change_count >= 3:
+                self.change_count = 0
+                self.left = False
         elif self.add_x < 0:
-            self.left = True  # moving left
+            self.change_count += 1
+            if self.change_count >= 3:
+                self.change_count = 0
+                self.left = True  # moving left
 
     def collide(self, x, y):
         """
@@ -161,23 +166,35 @@ class Enemy:
         :param powerup: Powerup
         :return:
         """
-        powerup.is_targeted = True
-        self.targeting = powerup
+
         dest = tuple(powerup.rect.center)
         dest = asp.get_reverse_pos(dest)
         if self.x < 0:
             self.x = 0
-        self.move_to_target(dest)
-        self._update_move_values()
+        # New path to dest from center
+        src = asp.get_reverse_pos((int(self.x + self.width // 2), int(self.y + self.height // 2)))
+        shortest_path = asp.a_star_search(src, dest, node_grid)
+        if not shortest_path:
+            # No path.
+            powerup.is_targeted = True
+            return
+        print("{0} at {1} ->{2}".format(id(self), src, dest))
+        if (len(self.curr_path) - self.path_pos) > len(shortest_path) // 3:
+            powerup.is_targeted = True
+            self.targeting = powerup
+            shortest_path = self._adjust_path(shortest_path)
+            self.curr_path = shortest_path
+            self.path_pos = 0
+            self._update_move_values()
 
     def reached_powerup(self):
         r, c = self.curr_path[self.path_pos]
         x, y = self.targeting.rect.center
         if self.collide(x, y):
-            self.targeting.power_up(self)
             # New path to end
             self.move_to_target((43, 0))
             self._update_move_values()
+            self.targeting.power_up(self)
             return True
         elif self.left:
             self.curr_path.append([r + 2, c])
@@ -185,22 +202,24 @@ class Enemy:
             self.curr_path.append([r - 2, c])
         return False
 
-    def move_to_target(self,dest):
-        # New path to end
-        src = asp.get_reverse_pos((int(self.x+self.width//2), int(self.y+self.height//2)))
+    def move_to_target(self, dest):
+        # New path to dest
+        src = asp.get_reverse_pos((int(self.x + self.width // 2), int(self.y + self.height // 2)))
         shortest_path = asp.a_star_search(src, dest, node_grid)
-        if not shortest_path:
-            print()
-        self.curr_path = shortest_path
-        self._adjust_path()
+        self.curr_path = self._adjust_path(shortest_path)
         self.path_pos = 0
 
-    def _adjust_path(self):
+    def _adjust_path(self, path):
+        end = path[-1]
+        path = path[::3]
+        path.append(end)
         squares = self.height // asp.SQUARE_SIZE
-        for i in range(len(self.curr_path)):
-            r, c = self.curr_path[i]
+        for i in range(len(path)):
+            # lower rows and cols until bottom and right are clear.
+            r, c = path[i]
             while not map_grid[r + squares, c]:
                 r -= 1
             while not map_grid[r, c + squares]:
                 c -= 1
-            self.curr_path[i] = (r, c)
+            path[i] = (r, c)
+        return path
