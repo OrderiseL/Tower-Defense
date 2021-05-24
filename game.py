@@ -1,4 +1,4 @@
-import pygame,PIL.Image
+import pygame, PIL.Image
 from enemies.enemy_types import *
 import settings
 from towers.tower_types import *
@@ -16,8 +16,8 @@ star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (6
 font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
-    [2, 0, 0],
-    [3, 2,1],
+    [1, 0, 0],
+    [3, 2, 1],
     [100, 0, 0],
     [0, 20, 0],
     [0, 50, 0],
@@ -78,7 +78,7 @@ class Game:
             self._check_events()
             if not self.pause:
                 # spawn powerboost:
-                if time.time() - self.pb_timer >= random.randrange(5, 6):
+                if (time.time() - self.pb_timer) >= random.randrange(5, 6) and len(self.powerups) <= 5:
                     self.pb_timer = time.time()
                     self.spawn_powerboost()
                 # spawn new enemies:
@@ -88,8 +88,8 @@ class Game:
                 self._handle_enemies()
                 if self.lives == 0:
                     print("Lost")
-                    #self.active = False
-                    #break
+                    # self.active = False
+                    # break
             self._handle_towers()
             self._update_screen()
         pygame.quit()
@@ -125,6 +125,10 @@ class Game:
                     self.moving_object = None
                 else:
                     self._mouse_down_events()
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_p:
+                    pos = pygame.mouse.get_pos()
+                    self.powerups.add(Powerup(pos))
 
     def _mouse_down_events(self):
         """
@@ -293,10 +297,12 @@ class Game:
             if e.out:
                 self.lives -= 1
                 self.enemies.remove(e)
+                continue
             elif e.dead:  # killed
                 self.enemies.remove(e)
+                continue
             # Reached powerup:
-            if isinstance(e.targeting,Powerup):
+            if isinstance(e.targeting, Powerup):
                 if e.reached_powerup():
                     self.powerups.remove(e.targeting)
                     e.targeting = -1
@@ -312,9 +318,9 @@ class Game:
     def spawn_powerboost(self):
         r = c = 0
         rows, cols = map_grid.shape
-        while not map_grid[r+2, c] or not map_grid[r, c+2] or not map_grid[r-2, c]:
-            r = random.randrange(0, rows-10)
-            c = random.randrange(0, cols-2)
+        while not map_grid[r + 2, c] or not map_grid[r, c + 2] or not map_grid[r - 2, c]:
+            r = random.randrange(10, rows - 10)
+            c = random.randrange(10, cols - 2)
         x, y = asp.get_pos((r, c))
         self.powerups.add(Powerup((x, y)))
 

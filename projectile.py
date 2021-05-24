@@ -11,7 +11,7 @@ class Arrow(pygame.sprite.Sprite):
         """
         super(Arrow, self).__init__()
         # For animation:
-        self.original_image = pygame.transform.scale(pygame.image.load(r"used_assets\Towers\arrow.png"), (20, 5))
+        self.original_image = pygame.transform.scale(pygame.image.load(r"used_assets\Towers\arrow.png"), (20, 5)).convert_alpha()
         self.image = self.original_image
         self.angle = 0
         # For positioning:
@@ -41,7 +41,7 @@ class Arrow(pygame.sprite.Sprite):
         """
         if self.target.dead:
             return -1
-        if self.target.collide(self.rect.center[0], self.rect.center[1]):
+        if self.target.collide(self.rect):
             return self.target.hit(damage) # Returns 0+
         return -2
 

@@ -17,11 +17,9 @@ class Enemy:
         self.worth = 50
         self.width = settings.wiz_width
         self.height = settings.wiz_height
-        self.speed = 2
+        self.speed = 3
         self.max_health = 3
         self.health = self.max_health
-        self.curr_path = asp.a_star_search((26, 0), (43, 0), node_grid)
-        self.curr_path = self._adjust_path(self.curr_path)
         # Movement and animation
         self.new_slope = False
         self.left = False
@@ -33,9 +31,11 @@ class Enemy:
         self.out = False
         self.dead = False
         # Set position
+        self.curr_path = asp.a_star_search((26, 0), (43, 0), node_grid)
+        self.curr_path = self._adjust_path(self.curr_path)
         self.row, self.col = self.curr_path[0]
         self.x, self.y = asp.get_pos(self.curr_path[0])
-        self.x = -self.width
+        self.x = -40
         self.add_y = 0  # Amount to add and keep even speed
         self.add_x = 0
         self._update_move_values()
@@ -80,39 +80,38 @@ class Enemy:
             self.animation_index = 0
         self.x += self.add_x
         self.y += self.add_y
-        if (self.path_pos + 1) >= len(self.curr_path):
-            return
-        # Check postion when moving right or left.
-        end = self.curr_path[self.path_pos + 1]
-        e_x, e_y = asp.get_pos(end)
-        if self.add_x > 0:
-            # exceeded end position
-            if (self.x + self.add_x) > e_x:
-                # self.x = e_x  # set at end position
-                self.new_slope = True
-        else:
-            # exceeded end position
-            if (self.x + self.add_x) < e_x:
-                # self.x = e_x  # set at end position
-                self.new_slope = True
-        # Check position moving Up or Down.
-        if self.add_y > 0:  # Down
-            # exceeded end position
-            if (self.y + self.add_y) > e_y:
-                # self.y = e_y  # set at end position
-                self.new_slope = True
-        else:
-            if (self.y + self.add_y) < e_y:
-                # self.y = e_y  # set at end position
-                self.new_slope = True
-        if self.new_slope:  # Calculate next x,y values
-            self.path_pos += 1
-            # Out of frame
-            if (self.path_pos + 1) >= len(self.curr_path):
-                self.out = True
-                return
-            self._update_move_values()
-            self.new_slope = False
+        if (self.path_pos + 1) < len(self.curr_path):
+            # Check postion when moving right or left.
+            end = self.curr_path[self.path_pos + 1]
+            e_x, e_y = asp.get_pos(end)
+            if self.add_x > 0:
+                # exceeded end position
+                if (self.x + self.add_x) > e_x:
+                    # self.x = e_x  # set at end position
+                    self.new_slope = True
+            else:
+                # exceeded end position
+                if (self.x + self.add_x) < e_x:
+                    # self.x = e_x  # set at end position
+                    self.new_slope = True
+            # Check position moving Up or Down.
+            if self.add_y > 0:  # Down
+                # exceeded end position
+                if (self.y + self.add_y) > e_y:
+                    # self.y = e_y  # set at end position
+                    self.new_slope = True
+            else:
+                if (self.y + self.add_y) < e_y:
+                    # self.y = e_y  # set at end position
+                    self.new_slope = True
+            if self.new_slope:  # Calculate next x,y values
+                self.path_pos += 1
+                # Out of frame
+                if (self.path_pos + 1) < len(self.curr_path):
+                    self._update_move_values()
+                    self.new_slope = False
+        if self.x < -self.width:
+            self.out = True
 
     def _update_move_values(self):
         """Calculates how to move according to angle"""
@@ -135,15 +134,15 @@ class Enemy:
                 self.change_count = 0
                 self.left = True  # moving left
 
-    def collide(self, x, y):
+    def collide(self, target):
         """
         Return if position hit enemy
         :param x: int
         :param y: int
         :return:
         """
-        if (self.width + self.x) >= x >= self.x \
-                and (self.height + self.y) >= y >= self.y:
+        rect = pygame.Rect(self.x, self.y, self.width, self.height)
+        if pygame.Rect.colliderect(rect, target):
             return True
         return False
 
@@ -166,8 +165,14 @@ class Enemy:
         :param powerup: Powerup
         :return:
         """
-
         dest = tuple(powerup.rect.center)
+        # Only when its on the way:
+        if self.left:
+            if dest[0] > self.x and self.y > settings.sc_height // 2:
+                return
+        else:
+            if dest[0] < self.x and self.y < dest[1]:
+                return
         dest = asp.get_reverse_pos(dest)
         if self.x < 0:
             self.x = 0
@@ -190,29 +195,28 @@ class Enemy:
     def reached_powerup(self):
         r, c = self.curr_path[self.path_pos]
         x, y = self.targeting.rect.center
-        if self.collide(x, y):
+        if self.collide(self.targeting.rect):
             # New path to end
             self.move_to_target((43, 0))
             self._update_move_values()
             self.targeting.power_up(self)
             return True
-        elif self.left:
-            self.curr_path.append([r + 2, c])
-        else:
-            self.curr_path.append([r - 2, c])
+
         return False
 
     def move_to_target(self, dest):
         # New path to dest
         src = asp.get_reverse_pos((int(self.x + self.width // 2), int(self.y + self.height // 2)))
         shortest_path = asp.a_star_search(src, dest, node_grid)
+
         self.curr_path = self._adjust_path(shortest_path)
         self.path_pos = 0
 
     def _adjust_path(self, path):
         end = path[-1]
-        path = path[::3]
+        path = path[:-1:3]
         path.append(end)
+        r = c = 0
         squares = self.height // asp.SQUARE_SIZE
         for i in range(len(path)):
             # lower rows and cols until bottom and right are clear.
@@ -221,5 +225,6 @@ class Enemy:
                 r -= 1
             while not map_grid[r, c + squares]:
                 c -= 1
-            path[i] = (r, c)
+            path[i] = [r, c]
+        path.append((r, -5))
         return path
