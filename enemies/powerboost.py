@@ -29,8 +29,9 @@ class Powerup(pygame.sprite.Sprite):
         Increases attributes
         :return: none
         """
-        enemy.health *= self.boost
-        enemy.max_health = enemy.health
+        enemy.max_health *= self.boost
+        enemy.health = enemy.max_health
+        enemy.speed *= self.boost * 0.7
         enemy.width = int(enemy.width * 1.5)
         enemy.height = int(enemy.height * 1.5)
         for i in range(len(enemy.images)):

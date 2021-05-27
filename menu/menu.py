@@ -116,6 +116,8 @@ class Menu:
         :return: None
         """
         self.x = x - 100
+        if self.x <0:
+            self.x *=-1
         self.y = y
         for btn in self.buttons:
             btn.update_pos()

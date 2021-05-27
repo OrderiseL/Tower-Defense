@@ -5,7 +5,7 @@ import A_STAR_pathfinding as asp
 from loader import node_grid, map_grid
 
 
-# TODO: Fix pathfinding
+# TODO: Powerup selection (Enemy moves back)
 
 class Enemy:
     """
@@ -17,7 +17,7 @@ class Enemy:
         self.worth = 50
         self.width = settings.wiz_width
         self.height = settings.wiz_height
-        self.speed = 3
+        self.speed = 2
         self.max_health = 3
         self.health = self.max_health
         # Movement and animation
@@ -40,6 +40,7 @@ class Enemy:
         self.add_x = 0
         self._update_move_values()
         # Powerup:
+        self.invalid = pygame.sprite.Group()
         self.targeting = None  # Contains target powerup
 
     def draw(self, screen):
@@ -165,13 +166,15 @@ class Enemy:
         :param powerup: Powerup
         :return:
         """
+        if powerup in self.invalid:
+            return
         dest = tuple(powerup.rect.center)
         # Only when its on the way:
         if self.left:
-            if dest[0] > self.x and self.y > settings.sc_height // 2:
+            if (dest[0]-300) > self.x:
                 return
         else:
-            if dest[0] < self.x and self.y < dest[1]:
+            if (dest[0]+300) < self.x:
                 return
         dest = asp.get_reverse_pos(dest)
         if self.x < 0:
@@ -191,6 +194,8 @@ class Enemy:
             self.curr_path = shortest_path
             self.path_pos = 0
             self._update_move_values()
+        else:
+            self.invalid.add(powerup)
 
     def reached_powerup(self):
         r, c = self.curr_path[self.path_pos]

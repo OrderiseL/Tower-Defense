@@ -16,12 +16,14 @@ star_img = pygame.transform.scale(pygame.image.load(r"used_assets\star.png"), (6
 font = pygame.font.SysFont("comicsans", 70)
 
 waves = [
-    [1, 0, 0],
-    [3, 2, 1],
-    [100, 0, 0],
-    [0, 20, 0],
-    [0, 50, 0],
-    [0, 100, 0],
+    [4, 0, 0],
+    [5, 2, 0],
+    [5, 2, 0],
+    [5, 2, 0],
+    [3, 4, 0],
+    [0, 4, 1],
+    [0, 4, 3],
+    [0, 0, 7],
     [20, 100, 0],
     [50, 100, 0],
     [100, 100, 0],
@@ -55,7 +57,7 @@ class Game:
         self.moving_object = None
         # Player resources
         self.lives = 10
-        self.money = 60000
+        self.money = 600
         # Gameplay values:
         self.pause = True
         self.wave_num = 1
@@ -88,8 +90,8 @@ class Game:
                 self._handle_enemies()
                 if self.lives == 0:
                     print("Lost")
-                    # self.active = False
-                    # break
+                    self.active = False
+                    break
             self._handle_towers()
             self._update_screen()
         pygame.quit()
@@ -310,7 +312,7 @@ class Game:
         # Move to powerup
         for pb in self.powerups:
             if not pb.is_targeted:
-                for e in self.enemies[::-1]:
+                for e in self.enemies:
                     if e.targeting is None:
                         e.move_to_powerup(pb)
                         break

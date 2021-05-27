@@ -80,9 +80,10 @@ class LongArcher(Tower):
             self.in_range = False
 
         for arrow in self.arrows:
-            worth = arrow.hit_target(self.damage)
-            if worth != -2:
+            res = arrow.hit_target(self.damage)
+            if res != -2:
                 self.arrows.remove(arrow)
+                worth+=res
         return worth
 
     def _update_direction(self, x, y):
