@@ -11,11 +11,13 @@ class Arrow(pygame.sprite.Sprite):
         """
         super(Arrow, self).__init__()
         # For animation:
-        self.original_image = pygame.transform.scale(pygame.image.load(r"used_assets\Towers\arrow.png"), (20, 5)).convert_alpha()
+        self.original_image = pygame.transform.scale(pygame.image.load(r"used_assets\Towers\arrow.png"),
+                                                     (20, 5)).convert_alpha()
         self.image = self.original_image
         self.angle = 0
         # For positioning:
         self.speed = 5
+
         self.rect = self.image.get_rect()
         self.rect.center = pos
         self.target = target  # Enemy type.
@@ -42,7 +44,7 @@ class Arrow(pygame.sprite.Sprite):
         if self.target.dead:
             return -1
         if self.target.collide(self.rect):
-            return self.target.hit(damage) # Returns 0+
+            return self.target.hit(damage)  # Returns 0+
         return -2
 
     def update(self):
@@ -66,3 +68,4 @@ class Arrow(pygame.sprite.Sprite):
         yp = (start_p[1] * (d - self.speed) + end_p[1] * self.speed) / d
         self.add_x = xp - start_p[0]
         self.add_y = yp - start_p[1]
+

@@ -5,8 +5,6 @@ import A_STAR_pathfinding as asp
 from loader import node_grid, map_grid
 
 
-# TODO: Powerup selection (Enemy moves back)
-
 class Enemy:
     """
     Abstract class for all enemies.
@@ -171,10 +169,10 @@ class Enemy:
         dest = tuple(powerup.rect.center)
         # Only when its on the way:
         if self.left:
-            if (dest[0]-300) > self.x:
+            if (dest[0] - 300) > self.x:
                 return
         else:
-            if (dest[0]+300) < self.x:
+            if (dest[0] + 300) < self.x:
                 return
         dest = asp.get_reverse_pos(dest)
         if self.x < 0:

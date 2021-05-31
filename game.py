@@ -18,8 +18,8 @@ font = pygame.font.SysFont("comicsans", 70)
 waves = [
     [4, 0, 0],
     [5, 2, 0],
-    [5, 2, 0],
-    [5, 2, 0],
+    [3, 2, 1],
+    [1, 2, 2],
     [3, 4, 0],
     [0, 4, 1],
     [0, 4, 3],
@@ -34,7 +34,7 @@ waves = [
 ]
 # for music
 pygame.mixer.music.load(r"used_assets\On_The_Horizon.mp3")
-pygame.mixer.music.set_volume(0)
+# pygame.mixer.music.set_volume(0)
 
 
 class Game:

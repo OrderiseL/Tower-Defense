@@ -76,9 +76,11 @@ def a_star_search(src, dest, node_grid):
     came_from = {}  # keep track of nodes in path
     open_set_hash = {}  # Track items in openset
     # Reset start node
-    g_score = {node: float("inf") for row in node_grid for node in row}
+    g_score = {node: float("inf") for row in node_grid for node in row}  # Distance to start
+    h_score = {node: float("inf") for row in node_grid for node in row}  # Distance to Destination
     g_score[node_grid[src[0], src[1]]] = 0
-    f = g_score[node_grid[src[0], src[1]]] + heuristic(src, dest)
+    h_score[node_grid[src[0], src[1]]] = heuristic(src, dest)
+    f = g_score[node_grid[src[0], src[1]]] + h_score[node_grid[src[0], src[1]]]
     open_set.put((f, node_grid[src[0], src[1]]))  # (f,Node)
     open_set_hash = {src}
     while not open_set.empty():
@@ -93,7 +95,8 @@ def a_star_search(src, dest, node_grid):
             if est_g < g_score[neighbor]:
                 came_from[neighbor] = current
                 g_score[neighbor] = est_g
-                f = heuristic((neighbor.row, neighbor.col), dest)
+                h_score[neighbor] = heuristic((neighbor.row, neighbor.col), dest)
+                f = h_score[neighbor] + g_score[neighbor]
                 if (neighbor.row, neighbor.col) not in open_set_hash:
                     open_set_hash.add((neighbor.row, neighbor.col))
                     open_set.put((f, neighbor))

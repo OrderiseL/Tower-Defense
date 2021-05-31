@@ -5,7 +5,7 @@ import pygame
 # Screen settings
 win_width = 1500
 win_height = 900
-bg = pygame.image.load(r"used_assets\cleaned.png")
+bg = pygame.image.load(r"used_assets\pretty_bg.png")
 bg = pygame.transform.scale(bg, (win_width, win_height))
 
 """For Towers:"""
